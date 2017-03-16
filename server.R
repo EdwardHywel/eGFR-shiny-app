@@ -1,14 +1,11 @@
 library(shiny)
 library(ggplot2)
-library(reshape2)
-library(gridExtra)
 library(knitr)
 library(dplyr)
 
 
 load("data/sqrt_final_model.rda")
-# source("Clean_data_publication.R", echo=FALSE)
-source("data/Clean_data_publication.R")
+load("data/DataForShiny.rda")
 source("data/CKD-EPI_model_functions.R")
 
 DeBois <- function(Ht, Wt){
@@ -90,11 +87,6 @@ shinyServer(function(input, output){
     paste0("The body surface area for both models was calculated as ", round(data$SufA, 2), " m\u00B2 using the DuBois formula\u00B9 and the input data provided.")
   }) 
   
-  #   output$text7 <- renderText({
-  #     prediction <- predict(object = sqrt_full, newdata = data(), interval = "prediction", level = input$Conf/100)^2
-  #     HTML(paste0("The estimated GFR value is ", round(prediction[1],2), " mL/min"))
-  #   })
-  
   output$text7 <- renderUI({
     prediction <- predict(object = sqrt_full, newdata = data(), interval = "prediction", level = input$Conf/100)^2
     tagList(
@@ -111,18 +103,10 @@ shinyServer(function(input, output){
     paste0(round(prediction[2],2), "-", round(prediction[3],2), " mL/min")
   })
   
-  
-  #   output$plot1 <- renderPlot({
-  #     pp <- predict(object = sqrt_full, newdata = data(), interval = "prediction", level = input$Conf/100)
-  #     p <- ggplot(data.frame(x=c(pp$fit)))
-  #   })
-  #   
-  
   output$text10 <- renderPrint({
     data = data()
     prediction <- Original_CKD_model_adjusted(data$Sex, data$Creat, data$Age, BSA = data$SufA)
-    # prediction <- Original_CKD_model(data$Sex, data$Creat, data$Age)
-    
+
     tagList(
       tags$strong(paste(round(prediction,2), "mL/min"))
     )
@@ -165,10 +149,7 @@ shinyServer(function(input, output){
       theme_bw(base_size = 18) 
     p
   })
-  
-  
-  
-  
+
   
 }
 )

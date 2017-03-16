@@ -28,12 +28,6 @@ CKD_model = function(a, b_F, b_M, c_F, c_M, d, e, f, Sex, Scr, Age){
 }  
 CKD_model = Vectorize(CKD_model)
 
-CKD_model_vector <- function(Scr, Age, Sex, par){
-  a = par[1]; b_F = par[2]; b_M = par[3]; c_F = par[4]; c_M = par[5]; d = par[6]; e = par[7]
-  f = par[8]
-  CKD_model(a, b_F, b_M, c_F, c_M, d, e, f, Sex, Scr, Age)
-} 
-
 CKD_model_adjusted = function(a, b_F, b_M, c_F, c_M, d, e, f, Sex, Scr, Age, BSA){
   # the CKD-EPI model with all parsamaters as variables
   # includinf the adjustment for BSA
@@ -59,16 +53,7 @@ CKD_model_adjusted = function(a, b_F, b_M, c_F, c_M, d, e, f, Sex, Scr, Age, BSA
 CKD_model_adjusted = Vectorize(CKD_model_adjusted)
 
 
-CKD_model_adjusted_vector <- function(Scr, Age, Sex, BSA, par){
-  a = par[1]; b_F = par[2]; b_M = par[3]; c_F = par[4]; c_M = par[5]; d = par[6]; e = par[7]
-  f = par[8]
-  CKD_model_adjusted(a, b_F, b_M, c_F, c_M, d, e, f, Sex, Scr, Age, BSA)
-} 
-
-
 # Defining the original parameters on the model 
-Original_parameters = c(a=141, b_F=0.7, b_M=0.9, c_F=-0.329, c_M=-0.411,
-                        d=-1.209, e=0.993, f=1.018)
 Original_CKD_model = function(Sex, Scr, Age){
   CKD_model(a=141, b_F=0.7, b_M=0.9, c_F=-0.329, c_M=-0.411, d=-1.209, e=0.993,
             f=1.018, Sex=Sex, Scr=Scr, Age=Age)
@@ -79,51 +64,6 @@ Original_CKD_model_adjusted = function(Sex, Scr, Age, BSA){
                      Sex=Sex, Scr=Scr, Age=Age, BSA=BSA)
 }
 
-# Defining the other calculated parameters on the model, as calculated by Tobias 
-Tobias_parameters = c(a=143.3773, b_F=0.81448, b_M=1.06266, c_F=-0.3164, 
-                      c_M=-0.2781, d=-1.118, e=0.99305, f=0.85853)
-Tobias_CKD_model = function(Sex, Scr, Age){
-  CKD_model(a=143.3773, b_F=0.81448, b_M=1.06266, c_F=-0.3164, c_M=-0.2781, 
-            d=-1.118, e=0.99305, f=0.85853, Sex=Sex, Scr=Scr, Age=Age)
-}
-Tobias_CKD_model_adjusted = function(Sex, Scr, Age, BSA){
-  CKD_model_adjusted(a=143.3773, b_F=0.81448, b_M=1.06266, c_F=-0.3164, 
-                     c_M=-0.2781, d=-1.118, e=0.99305, f=0.85853, 
-                     Sex=Sex, Scr=Scr, Age=Age, BSA=BSA)
-}
-
-
-
-BSA_adjustment <- function(x, BSA)
-  x*BSA/1.73
-
-
-
-
-
-
-###############################################################################
-
-# Redundant functions
-
-rmse_forCKDmodel  = function(x, data=thedata, adj =F){
-  # Computes RSS for a given set of parameters in the CKD model 
-  a = x[1]; b_F = x[2]; b_M = x[3]; c_F = x[4]; c_M = x[5]; d = x[6]; 
-  e = x[7]; f = x[8]  # Extract parameters from vector x 
-  if(adj==T){
-    rmse(data$GFR, CKD_model_adjusted(a, b_F, b_M, c_F, c_M, 
-                                  d, e, f, data$Sex,
-                                  data$Creat, 
-                                  data$Age, 
-                                  data$SufA))
-  }
-  else{
-    rmse(data$GFR, CKD_model(a, b_F, b_M, c_F, c_M, 
-                                  d, e, f, data$Sex,
-                                  data$Creat, 
-                                  data$Age))
-  }  
-}
 
 
 
