@@ -52,7 +52,7 @@ shinyUI(fluidPage(theme = "bootstrap.css",
     mainPanel(width=7,
               tabsetPanel(
                 tabPanel(h3("Results"),
-                         h3("The estimates provided are for guidance only"),
+                         h3("The estimates provided are for guidance only", style="color:red"),
                          h3(paste0("Estimated GFR using the new model:", '\u00B2')),
                          div(class="alert alert-success", style="font-size: 20px; width: 250px; text-align: left", uiOutput("text7")),
                          textOutput("text8"), 
