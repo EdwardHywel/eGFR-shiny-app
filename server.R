@@ -5,7 +5,7 @@ library(dplyr)
 
 
 load("data/sqrt_final_model.rda")
-load("data/DataForShiny.rda")
+load("data/RandomOrderData.rda")
 source("data/CKD-EPI_model_functions.R")
 
 DeBois <- function(Ht, Wt){
@@ -47,27 +47,27 @@ shinyServer(function(input, output){
   
   ##############################################################################
   
-  # output$text1 <- renderText({ 
+  # output$text1 <- renderText({
   #   data = data()
   #   paste("Blood serum creatinine:", round(data$Creat, 2), "mg/dL")
   # })
   # 
-  # output$text2 <- renderText({ 
+  # output$text2 <- renderText({
   #   data = data()
   #   paste("Age:", data$Age, "years")
   # })
   # 
-  # output$text3 <- renderText({ 
+  # output$text3 <- renderText({
   #   data = data()
   #   paste("Height:", round(data$Ht,0), "cm")
   # })
   # 
-  # output$text4 <- renderText({ 
+  # output$text4 <- renderText({
   #   data = data()
   #   paste("Weight:", round(data$Wt, 0), "kg")
   # })
   # 
-  # output$text5 <- renderText({ 
+  # output$text5 <- renderText({
   #   data = data()
   #   if(data$Sex=="M"){
   #     sex = "Male"
@@ -77,11 +77,11 @@ shinyServer(function(input, output){
   #   paste("Sex:", sex)
   # })
   # 
-  # output$text6 <- renderText({ 
+  # output$text6 <- renderText({
   #   data = data()
   #   paste0("Body surface area: ", round(data$SufA, 2), " m\u00B2 (Calculated using the DuBois formula\u00B9)")
   # })
-  # 
+
   output$text6.5<- renderText({ 
     data = data()
     paste0("The body surface area for both models was calculated as ", round(data$SufA, 2), " m\u00B2 using the DuBois formula\u00B9 and the input data provided.")
@@ -116,11 +116,11 @@ shinyServer(function(input, output){
   
   output$hist1 <- renderPlot({
     newdata = data()
-    p <- thedata %>% 
+    p <- RandomOrderData %>% 
       ggplot(aes(x=Creat)) + geom_histogram(aes(y=..density..), fill="#D9D9D9", colour="black", bins = 25, size=.5) + 
       geom_vline(xintercept = newdata$Creat, colour="red", size=rel(2)) + 
-      geom_vline(xintercept = max(thedata$Creat), alpha=.5) +
-      geom_vline(xintercept = min(thedata$Creat), alpha=.5) + 
+      geom_vline(xintercept = max(RandomOrderData$Creat), alpha=.5) +
+      geom_vline(xintercept = min(RandomOrderData$Creat), alpha=.5) + 
       xlab("Blood serum creatinine [mg/dL]") + 
       theme_bw(base_size = 18)
     p
@@ -128,11 +128,11 @@ shinyServer(function(input, output){
   
   output$hist2 <- renderPlot({
     newdata = data()
-    p <- thedata %>% 
+    p <- RandomOrderData %>% 
       ggplot(aes(x=Age)) + geom_histogram(aes(y=..density..), fill="#D9D9D9", colour="black", bins = 25, size=.5) + 
       geom_vline(xintercept = newdata$Age, colour="red", size=rel(2)) + 
-      geom_vline(xintercept = max(thedata$Age), alpha=.5) +
-      geom_vline(xintercept = min(thedata$Age), alpha=.5) + 
+      geom_vline(xintercept = max(RandomOrderData$Age), alpha=.5) +
+      geom_vline(xintercept = min(RandomOrderData$Age), alpha=.5) + 
       xlab("Age [years] ") + 
       theme_bw(base_size = 18)
     p
@@ -140,12 +140,36 @@ shinyServer(function(input, output){
   
   output$hist3 <- renderPlot({
     newdata = data()
-    p <- thedata %>% 
+    p <- RandomOrderData %>% 
       ggplot(aes(x=SufA)) + geom_histogram(aes(y=..density..), fill="#D9D9D9", colour="black", bins = 25, size=.5) + 
       geom_vline(xintercept = newdata$SufA, colour="red", size=rel(2)) + 
-      geom_vline(xintercept = max(thedata$SufA), alpha=.5) +
-      geom_vline(xintercept = min(thedata$SufA), alpha=.5) + 
+      geom_vline(xintercept = max(RandomOrderData$SufA), alpha=.5) +
+      geom_vline(xintercept = min(RandomOrderData$SufA), alpha=.5) + 
       xlab(expression(paste("Body surface area [", m^2, "]"))) + 
+      theme_bw(base_size = 18) 
+    p
+  })
+  
+  output$hist4 <- renderPlot({
+    newdata = data()
+    p <- RandomOrderData %>% 
+      ggplot(aes(x=Ht)) + geom_histogram(aes(y=..density..), fill="#D9D9D9", colour="black", bins = 25, size=.5) + 
+      geom_vline(xintercept = newdata$Ht, colour="red", size=rel(2)) + 
+      geom_vline(xintercept = max(RandomOrderData$Ht), alpha=.5) +
+      geom_vline(xintercept = min(RandomOrderData$Ht), alpha=.5) + 
+      xlab(expression(paste("Height [cm]"))) + 
+      theme_bw(base_size = 18) 
+    p
+  })
+  
+  output$hist5 <- renderPlot({
+    newdata = data()
+    p <- RandomOrderData %>% 
+      ggplot(aes(x=Wt)) + geom_histogram(aes(y=..density..), fill="#D9D9D9", colour="black", bins = 25, size=.5) + 
+      geom_vline(xintercept = newdata$Wt, colour="red", size=rel(2)) + 
+      geom_vline(xintercept = max(RandomOrderData$Wt), alpha=.5) +
+      geom_vline(xintercept = min(RandomOrderData$Wt), alpha=.5) + 
+      xlab(expression(paste("Weight [kg]"))) + 
       theme_bw(base_size = 18) 
     p
   })
