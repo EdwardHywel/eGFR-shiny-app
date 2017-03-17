@@ -112,6 +112,17 @@ shinyServer(function(input, output){
     )
   })
   
+  output$ex1 <- renderUI({
+    if (!input$Hyptest) return()
+    paste0("The probability that the estimated value is ", input$LesGre, " a GFR value of ", input$Testlevel, " is")
+  })
+  
+  output$ex2 <- renderUI({
+    if (!input$Hyptest) return()
+    
+    div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left", uiOutput("text9"))
+  })
+  
   ##############################################################################
   
   output$hist1 <- renderPlot({

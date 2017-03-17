@@ -29,16 +29,16 @@ shinyUI(fluidPage(theme = "bootstrap.css",
                  numericInput("Creat", "Input serum creatinine level",value="1", min=0),
                  radioButtons("CreatUnit", "Choose the creatinine units", choices = c("mg/dL"="mg", "umol/L"="umol"), inline=T),
                  numericInput("Age", "Input age in years",value="50", min=0),
-                 selectInput("HtUnit", "Choose the unit for height and then input it's value", 
-                             choices = c("Metric"="met", "Imperial"="imp")),
+                 radioButtons("HtUnit", "Choose the unit for height and then input it's value", 
+                             choices = c("Metric"="met", "Imperial"="imp"),  inline=T),
                  conditionalPanel(condition = 'input.HtUnit == "met"', 
                                   textInputRow("Ht", "Height: cm",value="170")),
                  conditionalPanel(condition = 'input.HtUnit == "imp"', 
                                   textInputRow("feet", "Height: feet", value = "5"),
                                   textInputRow("inch", "Height: inches", value="10")),
                  br(),
-                 selectInput("WtUnit", "Choose the unit for weight and then input it's value", 
-                             choices = c("Metric"="met", "Imperial" = "imp")),
+                 radioButtons("WtUnit", "Choose the unit for weight and then input it's value", 
+                             choices = c("Metric"="met", "Imperial" = "imp"),  inline=T),
                  conditionalPanel(condition = 'input.WtUnit == "met"', 
                                   textInputRow("Wt", "Weight: kg",value="80")),
                  conditionalPanel(condition = 'input.WtUnit == "imp"', 
@@ -46,8 +46,25 @@ shinyUI(fluidPage(theme = "bootstrap.css",
                                   textInputRow("pounds", "Weight: pounds", value="10")),
                  br(),
                  radioButtons("Sex","Choose the gender",choices = c("Male"="M","Female"= "F"), inline=T),
-                 numericInput("Conf", "Choose the confidence level for the prediction interval [%]", value=95)
+                 numericInput("Conf", "Choose the confidence level for the prediction interval [%]", value=95),
+                 br(),
+                 checkboxInput("Hyptest", "Do you want to calculate a probability", value = FALSE), 
+                 conditionalPanel(condition = 'input.Hyptest',
+                                               numericInput("Testlevel", "GFR level which to test",value="50", min=0), 
+                                  radioButtons("LesGre", "Do you wish to test for less than or grater than this value", 
+                                               choices = c("Lower"="below", "Greater"="above"), inline = T)
+                                  )
     ),
+    
+    
+    
+    # sidebarPanel(width=5, h3("Input Data"),
+    #              checkboxInput("Hyptest", "Do you want to calculate a probability", value = FALSE), 
+    #              conditionalPanel(condition = 'input.Hyptest == T', 
+    #                               numericInput("Age", "Input age in years",value="50", min=0))
+    # ),
+    
+    
     
     mainPanel(width=7,
               tabsetPanel(
@@ -57,6 +74,8 @@ shinyUI(fluidPage(theme = "bootstrap.css",
                          div(class="alert alert-success", style="font-size: 20px; width: 250px; text-align: left", uiOutput("text7")),
                          textOutput("text8"), 
                          div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left", uiOutput("text9")),
+                         uiOutput('ex1'),
+                         uiOutput('ex2'),
                          h3(paste0("Estimated GFR using the BSA adjusted CKD-EPI model:", '\u00B3')),
                          div(class="alert alert-success", style="font-size: 20px; width: 250px; text-align: left", uiOutput("text10")), 
                          textOutput("text6.5"),
