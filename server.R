@@ -102,7 +102,7 @@ shinyServer(function(input, output){
 
   output$text6.5<- renderText({ 
     data = data()
-    paste0("The body surface area for both models was calculated as ", round(data$SufA, 2), " m\u00B2 using the DuBois formula\u00B9 and the input data provided.")
+    paste0("The body surface area for both models was calculated as ", round(data$SufA, 2), " m\u00B2 using the DuBois formula\u00B3 and the input data provided.")
   }) 
   
   output$text7 <- renderUI({
