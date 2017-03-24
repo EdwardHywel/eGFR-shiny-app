@@ -45,6 +45,24 @@ shinyServer(function(input, output){
     new_data
   })
   
+  prob <- reactive({
+    prediction <- predict(object = sqrt_full, newdata = data(), se.fit = T)
+    
+    df <- sqrt_full$df.residual
+    se.fit <-prediction$se.fit
+    sigma <- summary(sqrt_full)$sigma
+    se.pred <- sqrt(se.fit^2 + sigma^2)
+    fit <- prediction$fit
+    testValue <- sqrt(input$TestValue)
+    
+    if(input$LesGre == "below"){
+      prob <- pt((fit - testValue)/se.pred, df =df, lower.tail = F)
+    } else if(input$LesGre == "above"){
+      prob <- pt((fit - testValue)/se.pred, df =df, lower.tail = T)
+    }
+    prob
+  })
+  
   ##############################################################################
   
   # output$text1 <- renderText({
@@ -112,16 +130,39 @@ shinyServer(function(input, output){
     )
   })
   
+  # output$ex1 <- renderUI({
+  #   if (!input$Hyptest) return()
+  #   paste0("The probability that the true GFR value is ", input$LesGre, " a threshold value of ", input$TestValue, " is")
+  # })
+  # 
+  # output$ex2 <- renderUI({
+  #   if (!input$Hyptest) return()
+  #   div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left; margin-bottom: 0", round(prob(), 3))
+  # })
+  # 
+  # output$ex3 <- renderUI({
+  #   if (!input$Hyptest) return()
+  #     paste0("Therefore out of 100 patients with the same input values we estimate that ", round(prob(), 3)*100, " would have a GFR value ", input$LesGre, " the threshold value of ", input$TestValue)
+  # })
+  
   output$ex1 <- renderUI({
     if (!input$Hyptest) return()
-    paste0("The probability that the estimated value is ", input$LesGre, " a GFR value of ", input$Testlevel, " is")
+    paste0("The model estimates that out of 100 patients with the same input values ")
   })
   
   output$ex2 <- renderUI({
     if (!input$Hyptest) return()
-    
-    div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left", uiOutput("text9"))
+    div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left; margin-bottom: 0", round(prob(), 4)*100)
   })
+  
+  output$ex3 <- renderUI({
+    if (!input$Hyptest) return()
+    paste0("are expected to have a GFR value ", input$LesGre, " the threshold value of ", 
+           input$TestValue, ". This is based on the probability of ", round(prob(), 4), " that for these given input values the true GFR value is ", 
+           input$LesGre, " a threshold value of ", input$TestValue)
+  })
+  
+
   
   ##############################################################################
   

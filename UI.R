@@ -48,15 +48,15 @@ shinyUI(fluidPage(theme = "bootstrap.css",
                  radioButtons("Sex","Choose the gender",choices = c("Male"="M","Female"= "F"), inline=T),
                  numericInput("Conf", "Choose the confidence level for the prediction interval [%]", value=95),
                  br(),
-                 checkboxInput("Hyptest", "Do you want to calculate a probability", value = FALSE), 
+                 checkboxInput("Hyptest", "Click the box if you wish to estimate a probability that the actual GFR is below or above a threshold value", value = TRUE), 
                  conditionalPanel(condition = 'input.Hyptest',
-                                               numericInput("Testlevel", "GFR level which to test",value="50", min=0), 
-                                  radioButtons("LesGre", "Do you wish to test for less than or grater than this value", 
-                                               choices = c("Lower"="below", "Greater"="above"), inline = T)
+                                               numericInput("TestValue", "Imput the GFR threshold value",value="50", min=0), 
+                                  radioButtons("LesGre", "Do you wish to calculate the probability that the actual GFR is below or above this threshhold value?", 
+                                               choices = c("Below"="below", "Above"="above"), inline = T)
                                   )
     ),
     
-    
+  
     
     # sidebarPanel(width=5, h3("Input Data"),
     #              checkboxInput("Hyptest", "Do you want to calculate a probability", value = FALSE), 
@@ -76,6 +76,7 @@ shinyUI(fluidPage(theme = "bootstrap.css",
                          div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left", uiOutput("text9")),
                          uiOutput('ex1'),
                          uiOutput('ex2'),
+                         uiOutput('ex3'),
                          h3(paste0("Estimated GFR using the BSA adjusted CKD-EPI model:", '\u00B3')),
                          div(class="alert alert-success", style="font-size: 20px; width: 250px; text-align: left", uiOutput("text10")), 
                          textOutput("text6.5"),
