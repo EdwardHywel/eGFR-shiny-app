@@ -1,4 +1,3 @@
-
 library(shiny)
 
 textInputRow<-function (inputId, label, value = "") 
@@ -11,6 +10,8 @@ textInputRow<-function (inputId, label, value = "")
 
 
 shinyUI(fluidPage(theme = "bootstrap.css",
+
+                  tags$head(includeScript("google-analytics.js")),
                   
                   titlePanel("Tool to estimate glomerular filtration"),
                   withMathJax(),
