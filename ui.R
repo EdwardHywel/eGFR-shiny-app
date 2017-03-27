@@ -9,9 +9,11 @@ textInputRow<-function (inputId, label, value = "")
 
 
 
-shinyUI(fluidPage(theme = "bootstrap.css",
+shinyUI(fluidPage(tags$head(includeScript("google-analytics.js")),
+					
+				  theme = "bootstrap.css",
 
-                  tags$head(includeScript("google-analytics.js")),
+                  
                   
                   titlePanel("Tool to estimate glomerular filtration"),
                   withMathJax(),
