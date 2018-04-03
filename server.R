@@ -35,7 +35,7 @@ shinyServer(function(input, output){
       Creat <- input$Creat
     }
     
-    new_data <- data.frame(Creat = Creat, 
+    new_data <- data.frame(Creat = as.numeric(Creat), 
                            Age=as.numeric(input$Age), 
                            Wt=as.numeric(Wt), 
                            Ht=as.numeric(Ht), 
@@ -63,103 +63,65 @@ shinyServer(function(input, output){
     prob
   })
   
-  ##############################################################################
-  
-  # output$text1 <- renderText({
-  #   data = data()
-  #   paste("Blood serum creatinine:", round(data$Creat, 2), "mg/dL")
-  # })
-  # 
-  # output$text2 <- renderText({
-  #   data = data()
-  #   paste("Age:", data$Age, "years")
-  # })
-  # 
-  # output$text3 <- renderText({
-  #   data = data()
-  #   paste("Height:", round(data$Ht,0), "cm")
-  # })
-  # 
-  # output$text4 <- renderText({
-  #   data = data()
-  #   paste("Weight:", round(data$Wt, 0), "kg")
-  # })
-  # 
-  # output$text5 <- renderText({
-  #   data = data()
-  #   if(data$Sex=="M"){
-  #     sex = "Male"
-  #   } else {
-  #     sex = "Female"
-  #   }
-  #   paste("Sex:", sex)
-  # })
-  # 
-  # output$text6 <- renderText({
-  #   data = data()
-  #   paste0("Body surface area: ", round(data$SufA, 2), " m\u00B2 (Calculated using the DuBois formula\u00B9)")
-  # })
 
-  output$text6.5<- renderText({ 
+  output$BSA_statment<- renderText({ 
     data = data()
     paste0("The body surface area for both models was calculated as ", round(data$SufA, 2), " m\u00B2 using the DuBois formula\u00B3 and the input data provided.")
   }) 
   
-  output$text7 <- renderUI({
+  output$JWpred <- renderUI({
     prediction <- predict(object = sqrt_full, newdata = data(), interval = "prediction", level = input$Conf/100)^2
-    tagList(
-      tags$strong(paste(round(prediction[1],2), "mL/min"))
-    )
+    div(class="alert alert-success", style="font-size: 20px; width: 250px; text-align: left; font-weight:bold", paste(round(prediction[1],2), "mL/min"))
   })
   
-  output$text8 <- renderText({
+  output$JW_CI1 <- renderText({
     paste0("The ", input$Conf, "% confidence interval for this predicted value is:")
   })
   
-  output$text9 <- renderText({
+  output$JW_CI2 <- renderText({
     prediction <- predict(object = sqrt_full, newdata = data(), interval = "prediction", level = input$Conf/100)^2
     paste0(round(prediction[2],2), "-", round(prediction[3],2), " mL/min")
   })
+
   
-  output$text10 <- renderPrint({
+  output$CKDpred <- renderPrint({
     data = data()
     prediction <- Original_CKD_model_adjusted(data$Sex, data$Creat, data$Age, BSA = data$SufA)
-
-    tagList(
-      tags$strong(paste(round(prediction,2), "mL/min"))
-    )
+    div(class="alert alert-success", style="font-size: 20px; width: 250px; text-align: left", paste(round(prediction,2), "mL/min"))
   })
   
-  # output$ex1 <- renderUI({
+
+  
+  # output$JWprob1 <- renderUI({
   #   if (!input$Hyptest) return()
   #   paste0("The probability that the true GFR value is ", input$LesGre, " a threshold value of ", input$TestValue, " is")
   # })
   # 
-  # output$ex2 <- renderUI({
+  # output$JWprob2 <- renderUI({
   #   if (!input$Hyptest) return()
   #   div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left; margin-bottom: 0", round(prob(), 3))
   # })
   # 
-  # output$ex3 <- renderUI({
+  # output$JWprob3 <- renderUI({
   #   if (!input$Hyptest) return()
   #     paste0("Therefore out of 100 patients with the same input values we estimate that ", round(prob(), 3)*100, " would have a GFR value ", input$LesGre, " the threshold value of ", input$TestValue)
   # })
   
-  output$ex1 <- renderUI({
+  output$JWprob1 <- renderUI({
     if (!input$Hyptest) return()
     paste0("The model estimates that out of 100 patients with the same input values ")
   })
   
-  output$ex2 <- renderUI({
+  output$JWprob2 <- renderUI({
     if (!input$Hyptest) return()
-    div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left; margin-bottom: 0", round(prob(), 4)*100)
+    div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left; margin-bottom: 0; font-weight:bold", round(prob(), 4)*100)
   })
   
-  output$ex3 <- renderUI({
+  output$JWprob3 <- renderUI({
     if (!input$Hyptest) return()
     paste0("are expected to have a GFR value ", input$LesGre, " the threshold value of ", 
            input$TestValue, ". This is based on the probability of ", round(prob(), 4), " that for these given input values the true GFR value is ", 
-           input$LesGre, " a threshold value of ", input$TestValue)
+           input$LesGre, " a threshold value of ", input$TestValue, ".")
   })
   
 
@@ -225,7 +187,11 @@ shinyServer(function(input, output){
       theme_bw(base_size = 18) 
     p
   })
-
+  
+  
+  ##############################################################################
+  
+  
   
 }
 )

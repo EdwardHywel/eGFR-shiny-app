@@ -1,12 +1,23 @@
 library(shiny)
 
-textInputRow<-function (inputId, label, value = "") 
+
+textInputRow<-function (inputId, label1, label2="", value = "") 
 {
   div(style="display:inline-block",
-      tags$label(label, `for` = inputId), 
-      tags$input(id = inputId, type = "text", value = value,class="input-mini"))
+      tags$label(label1, `for` = inputId), 
+      tags$input(id = inputId, type = "numeric", value = value,class="input-mini", style="width: 50px"),
+      tags$label(label2, `for` = inputId))
 }
 
+textInputRow2<-function (inputId1, inputId2, label1, label2="", label3="", value1 = "", value2 = "") 
+{
+  div(style="display:inline-block",
+      tags$label(label1, `for` = inputId1), 
+      tags$input(id = inputId1, type = "numeric", value = value1, class="input-mini", style="width: 50px"),
+      tags$label(label2, `for` = inputId1),
+      tags$input(id = inputId2, type = "numeric", value = value2, class="input-mini", style="width: 50px"),
+      tags$label(label3, `for` = inputId2))
+}
 
 
 shinyUI(fluidPage(tags$head(includeScript("google-analytics.js")),
@@ -15,7 +26,7 @@ shinyUI(fluidPage(tags$head(includeScript("google-analytics.js")),
 
                   
                   
-                  titlePanel("Tool to estimate glomerular filtration"),
+                  titlePanel("Tool to estimate the Glomerular Filtration Rate (GFR)"),
                   withMathJax(),
                   tags$script("
                               MathJax.Hub.Config({
@@ -29,24 +40,33 @@ shinyUI(fluidPage(tags$head(includeScript("google-analytics.js")),
   
   sidebarLayout(
     sidebarPanel(width = 5,  h3("Input Data"),
-                 numericInput("Creat", "Input serum creatinine level",value="1", min=0),
-                 radioButtons("CreatUnit", "Choose the creatinine units", choices = c("mg/dL"="mg", "umol/L"="umol"), inline=T),
-                 numericInput("Age", "Input age in years",value="50", min=0),
+                 radioButtons("CreatUnit", "Choose the unit for serum creatinine and then input it's value", choices = c("mg/dL"="mg", "umol/L"="umol"), inline=T),
+                 conditionalPanel(condition = 'input.CreatUnit == "mg"', 
+                                  textInputRow("Creat", "Creatinine:", "mg/dL", value="1")),
+                 conditionalPanel(condition = 'input.CreatUnit == "umol"', 
+                                  textInputRow("Creat", "Creatinine:", "umol/L", value="100")),
+                 br(),
+                 radioButtons("AgeUnit", "Choose the unit for Age and then input it's value", choices = c("years"="y", "years and months"="ym"), inline=T),
+                 conditionalPanel(condition = 'input.AgeUnit == "y"', 
+                                  textInputRow("Age", "Age:", "years", value="50")),
+                 conditionalPanel(condition = 'input.AgeUnit == "ym"', 
+                                  textInputRow2(inputId1 = "Age", inputId2 = "AgeMonths",  "Age:", "years, ", "months", value1=50, value2=0)),
+                 br(),
                  radioButtons("HtUnit", "Choose the unit for height and then input it's value", 
                              choices = c("Metric"="met", "Imperial"="imp"),  inline=T),
                  conditionalPanel(condition = 'input.HtUnit == "met"', 
-                                  textInputRow("Ht", "Height: cm",value="170")),
+                                  textInputRow("Ht", "Height:", "cm", value="170")),
                  conditionalPanel(condition = 'input.HtUnit == "imp"', 
-                                  textInputRow("feet", "Height: feet", value = "5"),
-                                  textInputRow("inch", "Height: inches", value="10")),
+                                  textInputRow2(inputId1 = "feet", inputId2 = "inch", "Height:", "feet,", "inshes", value1 = 5, value2 = 10)), 
+                                  # textInputRow("feet", "Height:", "feet", value = "5"),
+                                  # textInputRow("inch", "Height:", "inches", value="10")),
                  br(),
                  radioButtons("WtUnit", "Choose the unit for weight and then input it's value", 
                              choices = c("Metric"="met", "Imperial" = "imp"),  inline=T),
                  conditionalPanel(condition = 'input.WtUnit == "met"', 
-                                  textInputRow("Wt", "Weight: kg",value="80")),
+                                  textInputRow("Wt", "Weight:", "kg", value="80")),
                  conditionalPanel(condition = 'input.WtUnit == "imp"', 
-                                  textInputRow("stone", "Weight: stones", value="12"),
-                                  textInputRow("pounds", "Weight: pounds", value="10")),
+                                  textInputRow2(inputId1 = "stone", inputId2 = "pounds", "Weight:", "stone,", "pounds", value1 = 12, value2 = 10)), 
                  br(),
                  radioButtons("Sex","Choose the gender",choices = c("Male"="M","Female"= "F"), inline=T),
                  numericInput("Conf", "Choose the confidence level for the prediction interval [%]", value=95),
@@ -60,13 +80,7 @@ shinyUI(fluidPage(tags$head(includeScript("google-analytics.js")),
     ),
     
   
-    
-    # sidebarPanel(width=5, h3("Input Data"),
-    #              checkboxInput("Hyptest", "Do you want to calculate a probability", value = FALSE), 
-    #              conditionalPanel(condition = 'input.Hyptest == T', 
-    #                               numericInput("Age", "Input age in years",value="50", min=0))
-    # ),
-    
+  
     
     
     mainPanel(width=7,
@@ -74,15 +88,15 @@ shinyUI(fluidPage(tags$head(includeScript("google-analytics.js")),
                 tabPanel(h3("Results"),
                          h3("The estimates provided are for guidance only", style="color:red"),
                          h3(paste0("Estimated GFR using the new model:", '\u00B9')),
-                         div(class="alert alert-success", style="font-size: 20px; width: 250px; text-align: left", uiOutput("text7")),
-                         textOutput("text8"), 
-                         div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left", uiOutput("text9")),
-                         uiOutput('ex1'),
-                         uiOutput('ex2'),
-                         uiOutput('ex3'),
+                         uiOutput("JWpred"),
+                         textOutput("JW_CI1"), 
+                         div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left; font-weight:bold", uiOutput("JW_CI2")),
+                         uiOutput('JWprob1'),
+                         uiOutput('JWprob2'),
+                         uiOutput('JWprob3'),
                          h3(paste0("Estimated GFR using the BSA adjusted CKD-EPI model:", '\u00B2')),
-                         div(class="alert alert-success", style="font-size: 20px; width: 250px; text-align: left", uiOutput("text10")), 
-                         textOutput("text6.5"),
+                         uiOutput("CKDpred"), 
+                         textOutput("BSA_statment"),
                          # h3("The variables used to predict GFR are:"),
                          # textOutput("text1"),
                          # textOutput("text2"),
