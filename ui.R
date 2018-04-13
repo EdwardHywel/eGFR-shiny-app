@@ -118,11 +118,11 @@ shinyUI(fluidPage(tags$head(includeScript("google-analytics.js")),
                 tabPanel(h3("Equations"), 
                          
                          h3("The new equation used to predict this value is as follows:"), 
-                         div(img(src='NewEquation.png'), align = "center"),
-                         # sprintf('$$\\begin{align} 
-                         # \\sqrt{\\mathrm{GFR}} &= 1.8140 + 0.1914\\mathrm{Age} + 4.7328\\mathrm{BSA} - 3.7162\\log(\\mathrm{Cre}) - 0.9142\\log(\\mathrm{Cre})^2  \\nonumber \\\\
-                         # & \\quad + 1.0628\\log(\\mathrm{Cre})^3 - 0.0297\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.0202 +0.0125\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
-                         # \\end{align}$$'),
+                         # div(img(src='NewEquation.png'), align = "center"),
+                         sprintf('$$\\begin{align}
+                         \\sqrt{\\mathrm{GFR}} &= 1.8140 + 0.01914\\mathrm{Age} + 4.7328\\mathrm{BSA} - 3.7162\\log(\\mathrm{Cre}) - 0.9142\\log(\\mathrm{Cre})^2  \\nonumber \\\\
+                         & \\quad + 1.0628\\log(\\mathrm{Cre})^3 - 0.0297\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.0202 +0.0125\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
+                         \\end{align}$$'),
                          tags$div("where:"),
                          tags$div(
                            tags$ul(
@@ -134,16 +134,16 @@ shinyUI(fluidPage(tags$head(includeScript("google-analytics.js")),
                          ),
                          tags$div("and the coefficients in the equation have been rounded to 4 decimal places."),
                          h3("The CKD-EPI equation takes the following form:"), 
-                        #  sprintf('$$\\mathrm{GFR_{nonadjusted}} = 
-                        #   \\begin{cases} 
-                        #       141 \\times \\mathrm{min} \\left(\\frac{\\mathrm{Cre}}{0.7}, 1\\right)^{-0.329} \\times \\mathrm{max} \\left(\\frac{\\mathrm{Cre}}{0.7}, 1 \\right)^{-1.209} \\times \\mathrm{Age}^{0.993} \\times 1.018 & \\mathrm{if} \\, \\mathrm{Sex=Female} \\\\
-                        #       141 \\times \\mathrm{min} \\left(\\frac{\\mathrm{Cre}}{0.9}, 1\\right)^{-0.411} \\times \\mathrm{max} \\left(\\frac{\\mathrm{Cre}}{0.9}, 1 \\right)^{-1.209} \\times \\mathrm{Age}^{0.993}  & \\mathrm{if} \\, \\mathrm{Sex=Male} 
-                        # \\end{cases}
-                        # $$'),
-                        div(img(src='CKDEquation.png'), align = "center"),
+                         sprintf('$$\\mathrm{GFR_{nonadjusted}} =
+                          \\begin{cases}
+                              141 \\times \\mathrm{min} \\left(\\frac{\\mathrm{Cre}}{0.7}, 1\\right)^{-0.329} \\times \\mathrm{max} \\left(\\frac{\\mathrm{Cre}}{0.7}, 1 \\right)^{-1.209} \\times \\mathrm{Age}^{0.993} \\times 1.018 & \\mathrm{if} \\, \\mathrm{Sex=Female} \\\\
+                              141 \\times \\mathrm{min} \\left(\\frac{\\mathrm{Cre}}{0.9}, 1\\right)^{-0.411} \\times \\mathrm{max} \\left(\\frac{\\mathrm{Cre}}{0.9}, 1 \\right)^{-1.209} \\times \\mathrm{Age}^{0.993}  & \\mathrm{if} \\, \\mathrm{Sex=Male}
+                        \\end{cases}
+                        $$'),
+                        # div(img(src='CKDEquation.png'), align = "center"),
                         tags$div('where GFR now has the units ml/min/1.73m\u00B2 and all other variables have the same units as above. This non adjusted estimated GFR value is then BSA-adjusted by the following equation'), 
-                         # sprintf('$$\\mathrm{GFR_{adjusted}} =  \\mathrm{GFR_{non adjusted}} \\times \\frac{1.73}{\\mathrm{BSA}}$$')
-                        div(img(src='AdjustmentEquation.png'), align = "center")
+                        sprintf('$$\\mathrm{GFR_{adjusted}} =  \\mathrm{GFR_{non adjusted}} \\times \\frac{1.73}{\\mathrm{BSA}}$$')
+                        # div(img(src='AdjustmentEquation.png'), align = "center")
                         
                 )
               )
