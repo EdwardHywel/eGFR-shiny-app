@@ -1,82 +1,104 @@
 library(shiny)
 
-textInputRow<-function (inputId, label, value = "") 
+textInputRow_one<-function (text, inputId, label, value = "") 
 {
   div(style="display:inline-block",
-      tags$label(label, `for` = inputId), 
-      tags$input(id = inputId, type = "text", value = value,class="input-mini"))
+      tags$b(text),
+      tags$input(id = inputId, type = "number", value = value, style="width: 4em"),
+      label)
 }
 
 
+textInputRow_two<- function (text, inputId1, inputId2 , label1, label2, 
+                                value1 = "", value2 = "") 
+{
+  div(style="display:inline-block",
+      tags$b(text),
+      tags$input(id = inputId1, type = "number", value = value1, style="width: 4em"),
+      label1, 
+      tags$input(id = inputId2, type = "number", value = value2, style="width: 4em"),
+      label2) 
+  }
 
-shinyUI(fluidPage(tags$head(includeScript("google-analytics.js")),
-					
-				  theme = "bootstrap.css",
 
-                  
-                  
-                  titlePanel("Tool to estimate glomerular filtration"),
-                  withMathJax(),
-                  tags$script("
-                              MathJax.Hub.Config({
-                              tex2jax: {
-                              inlineMath: [['$','$'], ['\\(','\\)']],
-                              processEscapes: true
-                              }
-                              });"
-  ),
+################################################################################
+
+## THis need to b included somewhere
+
+# tags$head(includeScript("google-analytics.js")),
+# 
+# theme = "bootstrap.css",
+
+
+
+navbarPage("Tool to estimate GFR",
+
   
-  
+  tabPanel("Single Patient",
+           withMathJax(),
+           tags$script("
+                        MathJax.Hub.Config({
+                        tex2jax: {
+                        inlineMath: [['$','$'], 
+                        processEscapes: true
+                        }
+                        });"),
+           
   sidebarLayout(
-    sidebarPanel(width = 5,  h3("Input Data"),
-                 numericInput("Creat", "Input serum creatinine level",value="1", min=0),
-                 radioButtons("CreatUnit", "Choose the creatinine units", choices = c("mg/dL"="mg", "umol/L"="umol"), inline=T),
-                 numericInput("Age", "Input age in years",value="50", min=0),
-                 radioButtons("HtUnit", "Choose the unit for height and then input it's value", 
+    sidebarPanel(width = 5,  h3("Patient data"),
+                 radioButtons("CreatUnit", "Creatinine units:", choices = c("mg/dL"="mg", "umol/L"="umol"), inline=T),
+                 conditionalPanel(condition = 'input.CreatUnit == "mg"', 
+                                  textInputRow_one("Blood serum creatinine:", "Creat", "mg/dl", value="1")),
+                 conditionalPanel(condition = 'input.CreatUnit == "umol"', 
+                                  textInputRow_one("Blood serum creatinine:", "Creat", "umol/L", value="88")),
+                 # numericInput("Creat", "Blood serum creatinine:",value="1", min=0),
+                 radioButtons("CreatType", tags$div("Is the creatinine IDMS tracable?", 
+                                                    tags$sup("*")), 
+                              choices = c("Yes"="IDMS", "No"="Non_IDMS"), inline=T),
+                 textInputRow_one("Age:", "Age", "years", value="50"),
+                 br(),
+                 br(),
+                 radioButtons("HtUnit", "Height units:", 
                              choices = c("Metric"="met", "Imperial"="imp"),  inline=T),
                  conditionalPanel(condition = 'input.HtUnit == "met"', 
-                                  textInputRow("Ht", "Height: cm",value="170")),
+                                  textInputRow_one("Height:", "Ht", "cm" ,value="170")),
                  conditionalPanel(condition = 'input.HtUnit == "imp"', 
-                                  textInputRow("feet", "Height: feet", value = "5"),
-                                  textInputRow("inch", "Height: inches", value="10")),
+                                  textInputRow_two(text = "Height:", inputId1 = "feet", inputId2 = "inch", 
+                                                      label1 = "feet", label2 = "inches", value1 = "5", value2 = "10")),
                  br(),
-                 radioButtons("WtUnit", "Choose the unit for weight and then input it's value", 
+                 radioButtons("WtUnit", "Weight units:", 
                              choices = c("Metric"="met", "Imperial" = "imp"),  inline=T),
                  conditionalPanel(condition = 'input.WtUnit == "met"', 
-                                  textInputRow("Wt", "Weight: kg",value="80")),
+                                  textInputRow_one("Weight:", "Wt", "kg",value="80")),
                  conditionalPanel(condition = 'input.WtUnit == "imp"', 
-                                  textInputRow("stone", "Weight: stones", value="12"),
-                                  textInputRow("pounds", "Weight: pounds", value="10")),
+                                  textInputRow_two(text = "Weight:", inputId1 = "stone", 
+                                                   inputId2 = "pounds", label1 = "stone", 
+                                                   label2 = "pounds", value1 = "12", value2 = "10")),
                  br(),
-                 radioButtons("Sex","Choose the gender",choices = c("Male"="M","Female"= "F"), inline=T),
-                 numericInput("Conf", "Choose the confidence level for the prediction interval [%]", value=95),
+                 radioButtons("Sex","Gender:",choices = c("Male"="M","Female"= "F"), inline=T),
+                 textInputRow_one("Confidence level for the prediction interval:", "Conf", "%", "95"),
                  br(),
-                 checkboxInput("Hyptest", "Click the box if you wish to estimate a probability that the actual GFR is below or above a threshold value", value = TRUE), 
+                 checkboxInput("Hyptest", "Do you wish to estimate the probability that the true GFR is below or above a threshold value", 
+                               value = FALSE), 
                  conditionalPanel(condition = 'input.Hyptest',
-                                               numericInput("TestValue", "Imput the GFR threshold value",value="50", min=0), 
-                                  radioButtons("LesGre", "Do you wish to calculate the probability that the actual GFR is below or above this threshhold value?", 
+                                  textInputRow_one("GFR threshold value", "TestValue", "ml/min", "50"),
+                                  radioButtons("LesGre", "Probaility that try value is above or below?", 
                                                choices = c("Below"="below", "Above"="above"), inline = T)
-                                  )
+                                  ),
+                 radioButtons("UseOld", "Use the original CamGFR for non-IDMS creatinine data:",
+                              choices = c("Yes"=T,"No"= F), inline = T)
     ),
-    
-  
-    
-    # sidebarPanel(width=5, h3("Input Data"),
-    #              checkboxInput("Hyptest", "Do you want to calculate a probability", value = FALSE), 
-    #              conditionalPanel(condition = 'input.Hyptest == T', 
-    #                               numericInput("Age", "Input age in years",value="50", min=0))
-    # ),
-    
+
     
     
     mainPanel(width=7,
               tabsetPanel(
                 tabPanel(h3("Results"),
                          h3("The estimates provided are for guidance only", style="color:red"),
-                         h3(paste0("Estimated GFR using the new model:", '\u00B9')),
-                         div(class="alert alert-success", style="font-size: 20px; width: 250px; text-align: left", uiOutput("text7")),
+                         h3(HTML("Estimated GFR using CamGFR:<sup>1</sup>")),
+                         div(class="alert alert-success", style="font-size: 20px; width: 250px; text-align: left", uiOutput("CamGFR_estimate")),
                          textOutput("text8"), 
-                         div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left", uiOutput("text9")),
+                         div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left", uiOutput("CamGFR_interval")),
                          uiOutput('ex1'),
                          uiOutput('ex2'),
                          uiOutput('ex3'),
@@ -146,8 +168,49 @@ shinyUI(fluidPage(tags$head(includeScript("google-analytics.js")),
                         # div(img(src='AdjustmentEquation.png'), align = "center")
                         
                 )
-              )
+              ))
+  )),
+
+  tabPanel("Multiple Patients", 
+    sidebarLayout(
+      sidebarPanel(width = 5, 
+                   fileInput('data_file', 'Patient data'  ),
+                    # checkboxInput("header", "Header", TRUE),
+                   radioButtons("sep", "Separator",
+                                choices = c(Semicolon = ";",
+                                            Comma = ",",
+                                            Tab = "\t"),
+                                selected = ",", inline = T),
+                   p(HTML("<b>This file should contain columns:</b><br/> Creatinine (mg/dL)<br/> 
+                          Gender (M or F)<br/>  Height (cm)<br/>  Weight (Kg)<br/>  CreatinineType (IDMS or Non_IDMS)")),
+                   textInputRow_one("Confidence level for the prediction interval:", "Conf", "%", "95")
+                   ), 
+    
+    mainPanel(width = 7, 
+      tabsetPanel(
+        tabPanel("Input Data",
+                 h4("Data"),
+                 tableOutput("input_file")
+                 # tableOutput('input_file_xlsx')
+                 #this two commands should be one, but it works
+                 
+        ),
+        tabPanel("Output Data",
+                 h4("Data"),
+                 tableOutput("output_file")
+                 # tableOutput('input_file_xlsx')
+                 #this two commands should be one, but it works
+                 
+        ),
+        tabPanel("Summary"
+                 # tableOutput("summary") #this doesn´t work because the load input Data don´t work in the server
+        ),
+        tabPanel("New")
     )
-  )
-                  ))
+    ) # end mainPanel
+    ) # end sidebarLayout
+    ) # end tabPanel
+
+
+) # end navbarPage
 
