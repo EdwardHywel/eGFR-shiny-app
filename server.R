@@ -120,18 +120,18 @@ shinyServer(function(input, output){
       )
   })
 
-  # output$ex2 <- renderUI({
-  #   if (!input$Hyptest) return()
-  #   div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left; margin-bottom: 0", round(prob(), 4)*100)
-  # })
-  # 
-  # output$ex3 <- renderUI({
-  #   if (!input$Hyptest) return()
-  #   paste0("are expected to have a GFR value ", input$LesGre, " the threshold value of ", 
-  #          input$TestValue, ". This is based on the probability of ", round(prob(), 4), " that for these given input values the true GFR value is ", 
-  #          input$LesGre, " a threshold value of ", input$TestValue)
-  # })
-  
+  output$ex2 <- renderUI({
+    if (!input$Hyptest) return()
+    div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left; margin-bottom: 0", round(prob(), 4)*100)
+  })
+
+  output$ex3 <- renderUI({
+    if (!input$Hyptest) return()
+    paste0("are expected to have a GFR value ", input$LesGre, " the threshold value of ",
+           input$TestValue, ". This is based on the probability of ", round(prob(), 4), " that for these given input values the true GFR value is ",
+           input$LesGre, " a threshold value of ", input$TestValue)
+  })
+
 
   
   ##############################################################################

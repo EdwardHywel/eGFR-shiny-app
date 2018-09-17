@@ -79,7 +79,7 @@ navbarPage("Tool to estimate GFR",
                  textInputRow_one("Prediction interval confidence interval:", "Conf", "%", "95", min = 0, max = 100),
                  br(),
                  checkboxInput("Hyptest", "Do you wish to estimate the probability that the true GFR is below or above a threshold value", 
-                               value = FALSE), 
+                               value = TRUE), 
                  conditionalPanel(condition = 'input.Hyptest',
                                   textInputRow_one("GFR threshold value", "TestValue", "ml/min", "50"),
                                   radioButtons("LesGre", "Probaility that try value is above or below?", 
@@ -99,6 +99,9 @@ navbarPage("Tool to estimate GFR",
                          uiOutput("SufA_sentance"),
                          h4(HTML("GFR estimated using CamGFR:<sup>1,2</sup>")),
                          uiOutput("CamGFR_estimate"),
+                         # uiOutput('p_below'),
+                         # uiOutput('ex2'),
+                         # uiOutput('ex3'),
                          # br(),
                          uiOutput("p_below"),
                          h4(HTML("GFR esimated using the BSA adjusted CKD-EPI model:<sup>3</sup>")),
@@ -141,7 +144,7 @@ navbarPage("Tool to estimate GFR",
                                  value = FALSE), 
                    textInputRow_one("Confidence level for prediction interval:", "Conf", "%", "95"),
                    radioButtons("UseOld", tags$div("Use the original CamGFR for non-IDMS creatinine data:", 
-                                                   tags$sup("**")),
+                                                   tags$sup("*")),
                                 choices = c("Yes"=T,"No"= F), inline = T),
                    br(),
                    br(),
@@ -180,12 +183,23 @@ navbarPage("Tool to estimate GFR",
         
     )
     ) # end mainPanel
-    ) # end sidebarLayout
+    ), # end sidebarLayout
+    
+    hr(),
+    p(HTML("<font color=grey>*See the Equations tab for further detail</font>"))
+    # p(HTML("<font color=grey>*This option allows you to choose whether to use the original CamGFR model for non-IDMS patients or to use the updated CamGFR model which is a refitter version of the origial and valid for both IDMS or non-IDMS patients with the use of different coefficients. Please vie the Equations and references tab for some further detatil.</font>"))
+    
+    
     ), # end tabPanel
   
-  tabPanel(("Equations and referances"), 
+  tabPanel(("Equations and references"), 
            h4(HTML("CamGFR model:<sup>1</sup>")),
-           p("The CamGFR model for patients with IDMS tracable cratinine has the following form:"),
+           p(HTML("The original CamGFR model<sup>2</sup> was develop using a non-IDMS tracable 
+                  creatinien data set and hence should oly be used for non-IDMS tracable cratiine pateients. 
+                  The updataed CamGFR model<sup>1</sup> is a refitted version of the original model and has two
+                  versions, one for IDMS patients and one for non-IDMS patients. 
+                  The two equations for non-IDMS patiennt produce very similar results and either can be used.  </br>
+                  The updated CamGFR model for patients with IDMS tracable cratinine has the following form and coefficients:")),
            p('$$\\begin{align} 
              \\sqrt{\\mathrm{GFR}} &= 1.796004 + 0.0072\\mathrm{Age} + 4.4678\\mathrm{BSA} - 3.4611\\log(\\mathrm{Cre_{IDMS}}) - 0.5246\\log(\\mathrm{Cre_{IDMS}})^2  \\nonumber \\\\
              & \\quad + 0.7611\\log(\\mathrm{Cre_{IDMS}})^3 - 0.0219\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.4643 +0.0030\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
@@ -200,18 +214,16 @@ navbarPage("Tool to estimate GFR",
              \\sqrt{\\mathrm{GFR}} &= 1.8140 + 0.01914\\mathrm{Age} + 4.7328\\mathrm{BSA} - 3.7162\\log(\\mathrm{Cre}) - 0.9142\\log(\\mathrm{Cre})^2  \\nonumber \\\\
              & \\quad + 1.0628\\log(\\mathrm{Cre})^3 - 0.0297\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.0202 +0.0125\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
              \\end{align}$$'),
-           p("The two equations for non-IDMS patiennt produce vary similar results and ethier can be used."),
-           p("For the above equations:"),
-           tags$div(
-             tags$ul(
-               tags$li("GFR is Glomerular filtration rate with units ml/min"),
-               tags$li("Age has the units years"), 
-               tags$li("BSA is body surface area with units m\u00B2 calculated using the DuBois equation"),
-               tags$li("Cre is blood serum creatinine concentration with units mg/dL and the subscript IDMS indicate that the mearument is IDMS tracable")
-             )
-           ),
-           tags$div("All coefficients are rounded to 4 decimal places."),
-           
+           p(HTML("For the above equations:
+                  <div>
+                    <ul>
+                      <li>GFR is Glomerular filtration rate with units ml/min</li>
+                      <li>Age has the units years</li>
+                      <li>BSA is body surface area with units m\u00B2 calculated using the DuBois equation</li>
+                      <li>Cre is blood serum creatinine concentration with units mg/dL and the subscript IDMS indicates that the mearument is IDMS tracable</li>
+                    </ul>
+                  </div>
+                  All coefficients are rounded to 4 decimal places.")),
            
            h4(HTML("The CKD-EPI equation takes the following form:<sup>3</sup>")), 
            sprintf('$$\\mathrm{GFR_{nonadjusted}} =
