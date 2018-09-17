@@ -2,6 +2,7 @@ library(shiny)
 library(ggplot2)
 library(knitr)
 library(dplyr)
+library(readxl)
 
 
 load("data/sqrt_final_model.rda")
@@ -64,10 +65,17 @@ shinyServer(function(input, output){
   
   ##############################################################################
   
-  output$text6.5<- renderText({ 
+  output$SufA_sentance<- renderText({ 
     data = data()
-    paste0("The body surface area for both models was calculated as ", round(data$SufA, 2), " m\u00B2 using the DuBois formula\u00B3 and the input data provided.")
+    paste0("The body surface area for both models was calculated as ", 
+                    round(data$SufA, 2), 
+                  "m<sup>2</sup> using the DuBois formula<sup>4</sup> and the input data provided.")
+    # HTML(paste0("The body surface area for both models was calculated as ", 
+    #             round(data$SufA, 2), 
+    #             " m\u00B2 using the DuBois formula<sup>4</sup>\u00B3 and the input data provided."))
   }) 
+  
+
   
   output$CamGFR_estimate <- renderUI({
     prediction <- if(input$UseOld == T & input$CreatType == "Non_IDMS"){
@@ -75,50 +83,55 @@ shinyServer(function(input, output){
     } else {
       predict(object = WJ_interaction, newdata = data(), interval = "prediction", level = input$Conf/100)^2
     }
-    tagList(
-      tags$strong(paste(round(prediction[1],2), "mL/min"))
+
+    div(
+      div(class="alert alert-success", style="font-size: 20px; width: 300px; text-align: left; margin-bottom: 0",
+          tags$strong(paste(round(prediction[1],2))),
+          paste0("(", round(prediction[2],2), "-", round(prediction[3],2), ") mL/min")),
+      paste0("where the brackets denote the ", input$Conf,
+             "% confidence interval for this predicted value")
     )
   })
   
-  output$text8 <- renderText({
-    paste0("The ", input$Conf, "% confidence interval for this predicted value is:")
-  })
   
-  output$CamGFR_interval <- renderUI({
-    prediction <- if(input$UseOld == T & input$CreatType == "Non_IDMS"){
-      predict(object = sqrt_full, newdata = data(), interval = "prediction", level = input$Conf/100)^2
-    } else {
-      predict(object = WJ_interaction, newdata = data(), interval = "prediction", level = input$Conf/100)^2
-    }    
-    paste0(round(prediction[2],2), "-", round(prediction[3],2), " mL/min")
-  })
+
+
   
-  output$text10 <- renderPrint({
+  output$CKD_estimate <- renderPrint({
     data = data()
     prediction <- Original_CKD_model_adjusted(data$Sex, data$Creat, data$Age, BSA = data$SufA)
 
-    tagList(
-      tags$strong(paste(round(prediction,2), "mL/min"))
+    div(
+      div(class="alert alert-success", style="font-size: 20px; width: 175px; text-align: left; margin-bottom: 0", 
+          tags$strong(paste(round(prediction,2))), 
+          "mL/min")
     )
+
   })
   
   
-  output$ex1 <- renderUI({
+  output$p_below <- renderUI({
     if (!input$Hyptest) return()
-    paste0("The model estimates that out of 100 patients with the same input values ")
+    div(
+      "The model estimates that out of 100 patients with the same input values ",
+      div(class="alert alert-info", style="font-size: 20px; width: 100px; text-align: left; margin-bottom: 0", tags$strong(round(prob(), 4)*100)),
+      paste0("are expected to have a GFR value ", input$LesGre, " the threshold value of ",
+             input$TestValue, ". This is based on the probability of ", round(prob(), 4), " that for these given input values the true GFR value is ",
+             input$LesGre, " a threshold value of ", input$TestValue)
+      )
   })
-  
-  output$ex2 <- renderUI({
-    if (!input$Hyptest) return()
-    div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left; margin-bottom: 0", round(prob(), 4)*100)
-  })
-  
-  output$ex3 <- renderUI({
-    if (!input$Hyptest) return()
-    paste0("are expected to have a GFR value ", input$LesGre, " the threshold value of ", 
-           input$TestValue, ". This is based on the probability of ", round(prob(), 4), " that for these given input values the true GFR value is ", 
-           input$LesGre, " a threshold value of ", input$TestValue)
-  })
+
+  # output$ex2 <- renderUI({
+  #   if (!input$Hyptest) return()
+  #   div(class="alert alert-info", style="font-size: 20px; width: 250px; text-align: left; margin-bottom: 0", round(prob(), 4)*100)
+  # })
+  # 
+  # output$ex3 <- renderUI({
+  #   if (!input$Hyptest) return()
+  #   paste0("are expected to have a GFR value ", input$LesGre, " the threshold value of ", 
+  #          input$TestValue, ". This is based on the probability of ", round(prob(), 4), " that for these given input values the true GFR value is ", 
+  #          input$LesGre, " a threshold value of ", input$TestValue)
+  # })
   
 
   
@@ -187,53 +200,84 @@ shinyServer(function(input, output){
   
   ##############################################################################
   # Multiple patient
+  output$example_input <- renderTable({
+    read.table("data/example_data.csv", sep = ",", header = T) %>%
+      head(n = 5)
+  })
   
-  data_multi <- reactive({
+  
+  data_input <- reactive({
+    
+    if(input$Nonident == F){
+      return(NULL)
+    }
     
     inFile <- input$data_file
     
     if (is.null(inFile)){
       return(NULL)
-    }
+    }       
     
-    data <- read.table(inFile$datapath, sep = input$sep, header = T) %>%
+    is_xlsx <- grepl("xlsx", inFile$datapath)
+    
+    data <- if(is_xlsx == F){
+      read.table(inFile$datapath, sep = input$sep, header = T)
+    } else {
+      read_xlsx(inFile$datapath)
+    }
+
+
+  })
+    
+  data_output <- reactive({
+      
+    data <- data_input() %>%
       rename("Ht" = "Height", "Wt" = "Weight", "Sex" = "Gender",
              "Creat" = "Creatinine", "Creatinine_type" = "CreatinineType") %>%
       mutate(SufA = DuBois(Ht, Wt), 
-             log_Creat = log(Creat))
+             log_Creat = log(Creat)) 
+    
+    
+    CamGFR_res  = predict(object = WJ_interaction, newdata = data, 
+                          interval = "prediction", level = input$Conf/100)^2
+    
+    data <- data %>%
+      mutate("CKD-EPI" = Original_CKD_model_adjusted(Sex, Creat, Age, SufA),
+             "CamGFR" = CamGFR_res[,1],
+             "CamGFR lower" = CamGFR_res[,2],
+             "CamGFR upper" = CamGFR_res[,3]) %>%
+      select("CamGFR", "CamGFR lower", "CamGFR upper", "CKD-EPI",
+             Creatinine = Creat, Age, Height = Ht, Weight = Wt, Gender = Sex, BSA = SufA,
+             CreatinineType = Creatinine_type, everything(), -log_Creat)
     data
     
   }) 
   
   
   output$input_file <- renderTable({
-    inFile <- input$data_file
-    
-    if (is.null(inFile)){
-      return(NULL)
-    }
-    a <- read.table(inFile$datapath, sep = input$sep, header = T)
-  })
+    data_input()  
+    })
   
   
   output$output_file <- renderTable({
-    data = data_multi()
-    CamGFR  = predict(object = WJ_interaction, newdata = data, 
-                      interval = "prediction", level = input$Conf/100)^2
-    
-    data %>%
-      mutate("CKD-EPI" = Original_CKD_model_adjusted(Sex, Creat, Age, SufA),
-             "CamGFR" = CamGFR[,1], 
-             "CamGFR lower" = CamGFR[,2], 
-             "CamGFR upper" = CamGFR[,3]) %>%
-      select("CamGFR", "CamGFR lower", "CamGFR upper", "CKD-EPI", 
-             Creatinine = Creat, Age, Height = Ht, Weight = Wt, Gender = Sex, BSA = SufA,
-             CreatinineType = Creatinine_type, everything(), -log_Creat)
-    
-    
-    
+    data_output()
   })
-  
+
+    
+
+
+    
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      "Predicted_GFR_datatable.csv"
+      # paste(input$dataset, ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv(data_output(), file, row.names = FALSE)
+    }
+  )
+
+    
 }
 )
 
