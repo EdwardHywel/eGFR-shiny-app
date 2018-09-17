@@ -25,9 +25,9 @@ textInputRow_two<- function (text, inputId1, inputId2 , label1, label2,
 
 ## THis need to be included somewhere
 
-tags$head(includeScript("google-analytics.js")),
-
-theme = "bootstrap.css",
+# tags$head(includeScript("google-analytics.js")),
+# 
+# theme = "bootstrap.css",
 
 
 
