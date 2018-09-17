@@ -2,7 +2,6 @@ library(shiny)
 library(ggplot2)
 library(knitr)
 library(dplyr)
-library(readxl)
 
 
 load("data/sqrt_final_model.rda")
@@ -223,7 +222,7 @@ shinyServer(function(input, output){
     data <- if(is_xlsx == F){
       read.table(inFile$datapath, sep = input$sep, header = T)
     } else {
-      read_xlsx(inFile$datapath)
+      read.xlsx(inFile$datapath)
     }
 
 
