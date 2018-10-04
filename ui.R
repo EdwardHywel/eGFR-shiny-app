@@ -155,10 +155,12 @@ navbarPage("Tool to estimate GFR",
       tabsetPanel(
         tabPanel("Instruction",
                  br(),
-                 p(HTML("In this section an excel or comma seperated file (if 
-                        the file has a different separator please specify) can be uploaded
-                        and GFR will be estimated using both the CamGFR model and the CKD model.
-                        The input file should have the following column names with the unit in the blackets.")),
+                 p(HTML("In this section a comma seperated file (.csv) can be uploaded
+                        and GFR will be estimated using both the CamGFR model and the CKD model (if 
+                        the file has a different separator please specify). 
+                        An excel (.xls or .xlsx) will not work so please convert it to a .csv file 
+                        before trying to usie this app.")),
+                 p(HTML("The input file should have the following column names with the unit in the blackets.")),
                  p(HTML("Creatinine (mg/dL)<br/> 
                           Gender (M or F)<br/>  Height (cm)<br/>  Weight (Kg)<br/>  CreatinineType (IDMS or Non_IDMS)")),
                  tags$strong("Example input data:"),

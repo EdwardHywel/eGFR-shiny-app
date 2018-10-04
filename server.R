@@ -217,19 +217,23 @@ shinyServer(function(input, output){
       return(NULL)
     }       
     
-    is_xlsx <- grepl("xlsx", inFile$datapath)
+    is_xlsx <- grepl(".xlsx", inFile$datapath) | grepl(".xls", inFile$datapath)
     
     data <- if(is_xlsx == F){
       read.table(inFile$datapath, sep = input$sep, header = T)
     } else {
-      read.xlsx(inFile$datapath)
+      "Please convert the file to a .csv or .txt file first"
     }
-
-
+    data
+    
   })
     
   data_output <- reactive({
-      
+    
+    if(is.character(data_input())){
+      return(data_input())
+    }
+    
     data <- data_input() %>%
       rename("Ht" = "Height", "Wt" = "Weight", "Sex" = "Gender",
              "Creat" = "Creatinine", "Creatinine_type" = "CreatinineType") %>%
