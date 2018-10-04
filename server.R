@@ -236,25 +236,27 @@ shinyServer(function(input, output){
 
     data <- data_input()
     
-    data <- data_input() %>%
-      rename("Ht" = "Height", "Wt" = "Weight", "Sex" = "Gender",
-             "Creat" = "Creatinine", "Creatinine_type" = "CreatinineType") %>%
-      mutate(SufA = DuBois(Ht, Wt),
-             log_Creat = log(Creat))
+    data_change_names <- data.frame(Ht = data$Height, Wt = data$Weight, 
+                                    Sex = data$Gender, Creat = data$Creatinine, 
+                                    Creatinine_type = data$CreatinineType, 
+                                    SufA = DuBois(data$Height, data$Weight),
+                                    Age = data$Age,
+                                    log_Creat = log(data$Creatinine))
+    
+    CamGFR_res  = predict(object = WJ_interaction, newdata = data_change_names,
+                          interval = "prediction", level = input$Conf/100)^2
     
     
-    # CamGFR_res  = predict(object = WJ_interaction, newdata = data, 
-    #                       interval = "prediction", level = input$Conf/100)^2
-    # 
-    # data <- data %>%
-    #   mutate("CKD-EPI" = Original_CKD_model_adjusted(Sex, Creat, Age, SufA),
-    #          "CamGFR" = CamGFR_res[,1],
-    #          "CamGFR lower" = CamGFR_res[,2],
-    #          "CamGFR upper" = CamGFR_res[,3]) %>%
-    #   select("CamGFR", "CamGFR lower", "CamGFR upper", "CKD-EPI",
-    #          Creatinine = Creat, Age, Height = Ht, Weight = Wt, Gender = Sex, BSA = SufA,
-    #          CreatinineType = Creatinine_type, everything(), -log_Creat)
-    data
+    data_output <- data_change_names 
+    data_output$"CKD-EPI" <- 
+      Original_CKD_model_adjusted(data_output$Sex, data_output$Creat, 
+                                  data_output$Age, data_output$SufA)
+    data_output$CamGFR <- CamGFR_res[,1]
+    data_output$"CamGFR lower" <- CamGFR_res[,2]
+    data_output$"CamGFR upper" <- CamGFR_res[,3]
+    
+    data_output <- data_output[,c("CamGFR", "CamGFR lower", "CamGFR upper", "CKD-EPI")]  
+    data_output
     
   }) 
   
