@@ -241,17 +241,17 @@ shinyServer(function(input, output){
              log_Creat = log(Creat)) 
     
     
-    CamGFR_res  = predict(object = WJ_interaction, newdata = data, 
-                          interval = "prediction", level = input$Conf/100)^2
-    
-    data <- data %>%
-      mutate("CKD-EPI" = Original_CKD_model_adjusted(Sex, Creat, Age, SufA),
-             "CamGFR" = CamGFR_res[,1],
-             "CamGFR lower" = CamGFR_res[,2],
-             "CamGFR upper" = CamGFR_res[,3]) %>%
-      select("CamGFR", "CamGFR lower", "CamGFR upper", "CKD-EPI",
-             Creatinine = Creat, Age, Height = Ht, Weight = Wt, Gender = Sex, BSA = SufA,
-             CreatinineType = Creatinine_type, everything(), -log_Creat)
+    # CamGFR_res  = predict(object = WJ_interaction, newdata = data, 
+    #                       interval = "prediction", level = input$Conf/100)^2
+    # 
+    # data <- data %>%
+    #   mutate("CKD-EPI" = Original_CKD_model_adjusted(Sex, Creat, Age, SufA),
+    #          "CamGFR" = CamGFR_res[,1],
+    #          "CamGFR lower" = CamGFR_res[,2],
+    #          "CamGFR upper" = CamGFR_res[,3]) %>%
+    #   select("CamGFR", "CamGFR lower", "CamGFR upper", "CKD-EPI",
+    #          Creatinine = Creat, Age, Height = Ht, Weight = Wt, Gender = Sex, BSA = SufA,
+    #          CreatinineType = Creatinine_type, everything(), -log_Creat)
     data
     
   }) 
@@ -265,9 +265,6 @@ shinyServer(function(input, output){
   output$output_file <- renderTable({
     data_output()
   })
-
-    
-
 
     
   output$downloadData <- downloadHandler(
