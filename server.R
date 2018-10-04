@@ -234,11 +234,13 @@ shinyServer(function(input, output){
       return(data_input())
     }
     
-    data <- data_input() %>%
-      rename("Ht" = "Height", "Wt" = "Weight", "Sex" = "Gender",
-             "Creat" = "Creatinine", "Creatinine_type" = "CreatinineType") %>%
-      mutate(SufA = DuBois(Ht, Wt), 
-             log_Creat = log(Creat)) 
+    data <- data_input()
+    
+    # data <- data_input() %>%
+    #   rename("Ht" = "Height", "Wt" = "Weight", "Sex" = "Gender",
+    #          "Creat" = "Creatinine", "Creatinine_type" = "CreatinineType") %>%
+    #   mutate(SufA = DuBois(Ht, Wt), 
+    #          log_Creat = log(Creat)) 
     
     
     # CamGFR_res  = predict(object = WJ_interaction, newdata = data, 
