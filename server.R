@@ -4,7 +4,6 @@ library(knitr)
 library(dplyr)
 
 
-
 load("data/sqrt_final_model.rda")
 load("data/CamGFR_refitted.rda")
 load("data/RandomOrderData.rda")
@@ -223,7 +222,7 @@ shinyServer(function(input, output){
     data <- if(is_xlsx == F){
       read.table(inFile$datapath, sep = input$sep, header = T)
     } else {
-      read_xlsx(inFile$datapath)
+      read.xlsx(inFile$datapath)
     }
 
 
