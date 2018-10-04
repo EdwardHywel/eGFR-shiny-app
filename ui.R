@@ -195,7 +195,7 @@ navbarPage("Tool to estimate GFR",
   tabPanel(("Equations and references"), 
            h4(HTML("CamGFR model:<sup>1</sup>")),
            p(HTML("The original CamGFR model<sup>2</sup> was develop using a non-IDMS tracable 
-                  creatinien data set and hence should oly be used for non-IDMS tracable cratiine pateients. 
+                  creatinien data set and hence should oly be used for non-IDMS tracable creatinine patients. 
                   The updataed CamGFR model<sup>1</sup> is a refitted version of the original model and has two
                   versions, one for IDMS patients and one for non-IDMS patients. 
                   The two equations for non-IDMS patiennt produce very similar results and either can be used.  </br>
@@ -204,12 +204,12 @@ navbarPage("Tool to estimate GFR",
              \\sqrt{\\mathrm{GFR}} &= 1.796004 + 0.0072\\mathrm{Age} + 4.4678\\mathrm{BSA} - 3.4611\\log(\\mathrm{Cre_{IDMS}}) - 0.5246\\log(\\mathrm{Cre_{IDMS}})^2  \\nonumber \\\\
              & \\quad + 0.7611\\log(\\mathrm{Cre_{IDMS}})^3 - 0.0219\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.4643 +0.0030\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
              \\end{align}$$'),
-           p("For patients who do not have a serum cratinine measurment some of the coefficients are adjusted to the following:"),
+           p("For patients who do not have an IDMS serum cratinine measurment some of the coefficients are adjusted to the following:"),
            p('$$\\begin{align} 
              \\sqrt{\\mathrm{GFR}} &= 2.2400 + 0.0072\\mathrm{Age} + 4.4678\\mathrm{BSA} - 3.945056\\log(\\mathrm{Cre}) - 1.105374\\log(\\mathrm{Cre})^2  \\nonumber \\\\
              & \\quad + 1.349847\\log(\\mathrm{Cre})^3 - 0.0219\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.4643 +0.0030\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
              \\end{align}$$'),
-           p(HTML("If using non-IDMS tracable IDMS the original CamGFR model<sup>2</sup> is still valid and has the slighly different coefficients:")),
+           p(HTML("If using non-IDMS tracable creatinine the original CamGFR model<sup>2</sup> is valid and is the default option on this app:")),
            p('$$\\begin{align}
              \\sqrt{\\mathrm{GFR}} &= 1.8140 + 0.01914\\mathrm{Age} + 4.7328\\mathrm{BSA} - 3.7162\\log(\\mathrm{Cre}) - 0.9142\\log(\\mathrm{Cre})^2  \\nonumber \\\\
              & \\quad + 1.0628\\log(\\mathrm{Cre})^3 - 0.0297\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.0202 +0.0125\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
