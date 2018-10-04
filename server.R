@@ -243,9 +243,49 @@ shinyServer(function(input, output){
                                     Age = data$Age,
                                     log_Creat = log(data$Creatinine))
     
-    CamGFR_res  = predict(object = WJ_interaction, newdata = data_change_names,
-                          interval = "prediction", level = input$Conf/100)^2
+    # Estimate_CamGFR <- function(data, useOld = F){
+    #   if(useOld == T){
+    #     ifelse(data$Creatinine_type == "IDMS", 
+    #            predict(object = WJ_interaction, newdata = data,
+    #                    interval = "prediction", level = input$ConfMulti/100)^2, 
+    #            predict(object = sqrt_full, newdata = data,
+    #                    interval = "prediction", level = input$ConfMulti/100)^2)
+    #   } else {
+    #     predict(object = WJ_interaction, newdata = data,
+    #             interval = "prediction", level = input$ConfMulti/100)^2
+    #   }
+    # }
     
+    Estimate_CamGFR <- function(data, useOld = F){
+      if(useOld == T){
+        if(data$Creatinine_type == "IDMS"){
+          predict(object = WJ_interaction, newdata = data,
+                  interval = "prediction", level = input$ConfMulti/100)^2
+        } else {
+          predict(object = sqrt_full, newdata = data,
+                  interval = "prediction", level = input$ConfMulti/100)^2
+        } 
+      } else {
+        predict(object = WJ_interaction, newdata = data,
+                interval = "prediction", level = input$ConfMulti/100)^2
+      }
+    }
+   
+    len = nrow(data_change_names)
+    
+    CamGFR_res <- matrix(NA, nrow = len, ncol = 3)
+    
+    for(i in 1:len){
+      CamGFR_res[i,] = Estimate_CamGFR(data_change_names[i,], useOld = input$UseOldMulti)  
+    }
+
+    # CamGFR_res <- Estimate_CamGFR(data_change_names, useOld = input$UseOldMulti)
+    #     
+    # CamGFR_res <- predict(object = WJ_interaction, newdata = data_change_names,
+    #                       interval = "prediction", level = input$ConfMulti/100)^2
+
+    # CamGFR_res_old <- predict(object = sqrt_full, newdata = data_change_names,
+    #                       interval = "prediction", level = input$ConfMulti/100)^2
     
     data_output <- data_change_names 
     data_output$"CKD-EPI" <- 
