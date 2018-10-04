@@ -229,10 +229,10 @@ shinyServer(function(input, output){
   })
     
   data_output <- reactive({
-    
-    if(is.character(data_input())){
-      return(data_input())
-    }
+
+    # if(is.character(data_input())){
+    #   return(data_input())
+    # }
 
     data <- data_input()
     
