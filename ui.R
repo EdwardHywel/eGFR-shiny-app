@@ -85,7 +85,7 @@ navbarPage("Tool to estimate GFR",
                                   radioButtons("LesGre", "Probaility that try value is above or below?", 
                                                choices = c("Below"="below", "Above"="above"), inline = T)
                                   ),
-                 radioButtons("UseOld", tags$div("Use the original CamGFR for non-IDMS creatinine data:", 
+                 radioButtons("UseOld", tags$div("Use CamGFR v1 for non-IDMS creatinine data:", 
                                                  tags$sup("**")),
                               choices = c("Yes"=T,"No"= F), inline = T)
     ),
@@ -143,7 +143,7 @@ navbarPage("Tool to estimate GFR",
                    checkboxInput("Nonident", "This file contains no patient identifiable data", 
                                  value = FALSE), 
                    textInputRow_one("Confidence level for prediction interval:", "ConfMulti", "%", "95"),
-                   radioButtons("UseOldMulti", tags$div("Use the original CamGFR for non-IDMS creatinine data:", 
+                   radioButtons("UseOldMulti", tags$div("Use CamGFR v1 for non-IDMS creatinine data:", 
                                                    tags$sup("*")),
                                 choices = c("Yes"=T,"No"= F), inline = T),
                    br(),
@@ -196,12 +196,11 @@ navbarPage("Tool to estimate GFR",
   
   tabPanel(("Equations and references"), 
            h4(HTML("CamGFR model:<sup>1</sup>")),
-           p(HTML("The original CamGFR model<sup>2</sup> was develop using a non-IDMS tracable 
+           p(HTML("The CamGFR v1 model<sup>2</sup> was develop using a non-IDMS tracable 
                   creatinien data set and hence should oly be used for non-IDMS tracable creatinine patients. 
-                  The updataed CamGFR model<sup>1</sup> is a refitted version of the original model and has two
-                  versions, one for IDMS patients and one for non-IDMS patients. 
-                  The two equations for non-IDMS patiennt produce very similar results and either can be used.  </br>
-                  The updated CamGFR model for patients with IDMS tracable cratinine has the following form and coefficients:")),
+                  The CamGFR v2 model<sup>1</sup> is a refitted version of the original model and is suitable for both IDMS-tracable and and non-IDMS-tracable creatinine. 
+                  The two equations for non-IDMS-tracable creatinine produce very similar results and either can be used.  </br>
+                  The CamGFR v2 model for patients with IDMS tracable cratinine has the following form and coefficients:")),
            p('$$\\begin{align} 
              \\sqrt{\\mathrm{GFR}} &= 1.154 + 0.0018\\mathrm{Age} + 4.772\\mathrm{BSA} - 3.499\\log(\\mathrm{Cre_{IDMS}}) - 0.738\\log(\\mathrm{Cre_{IDMS}})^2  \\nonumber \\\\
              & \\quad + 0.699\\log(\\mathrm{Cre_{IDMS}})^3 - 0.028\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.302 +0.006\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
@@ -211,7 +210,7 @@ navbarPage("Tool to estimate GFR",
              \\sqrt{\\mathrm{GFR}} &= 1.662 + 0.0018\\mathrm{Age} + 4.772\\mathrm{BSA} - 4.049\\log(\\mathrm{Cre}) - 1.162\\log(\\mathrm{Cre})^2  \\nonumber \\\\
              & \\quad + 1.532\\log(\\mathrm{Cre})^3 - 0.028\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.302 +0.006\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
              \\end{align}$$'),
-           p(HTML("If using non-IDMS tracable creatinine the original CamGFR model<sup>3</sup> is valid and is the default option on this app:")),
+           p(HTML("If using non-IDMS tracable creatinine the CamGFR v1 model<sup>3</sup> is valid and is the default option on this app:")),
            p('$$\\begin{align}
              \\sqrt{\\mathrm{GFR}} &= 1.8140 + 0.01914\\mathrm{Age} + 4.7328\\mathrm{BSA} - 3.7162\\log(\\mathrm{Cre}) - 0.9142\\log(\\mathrm{Cre})^2  \\nonumber \\\\
              & \\quad + 1.0628\\log(\\mathrm{Cre})^3 - 0.0297\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.0202 +0.0125\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
