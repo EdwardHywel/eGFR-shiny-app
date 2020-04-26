@@ -203,15 +203,15 @@ navbarPage("Tool to estimate GFR",
                   The two equations for non-IDMS patiennt produce very similar results and either can be used.  </br>
                   The updated CamGFR model for patients with IDMS tracable cratinine has the following form and coefficients:")),
            p('$$\\begin{align} 
-             \\sqrt{\\mathrm{GFR}} &= 1.796004 + 0.0072\\mathrm{Age} + 4.4678\\mathrm{BSA} - 3.4611\\log(\\mathrm{Cre_{IDMS}}) - 0.5246\\log(\\mathrm{Cre_{IDMS}})^2  \\nonumber \\\\
-             & \\quad + 0.7611\\log(\\mathrm{Cre_{IDMS}})^3 - 0.0219\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.4643 +0.0030\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
+             \\sqrt{\\mathrm{GFR}} &= 1.154 + 0.0018\\mathrm{Age} + 4.772\\mathrm{BSA} - 3.499\\log(\\mathrm{Cre_{IDMS}}) - 0.738\\log(\\mathrm{Cre_{IDMS}})^2  \\nonumber \\\\
+             & \\quad + 0.699\\log(\\mathrm{Cre_{IDMS}})^3 - 0.028\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.302 +0.006\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
              \\end{align}$$'),
            p("For patients who do not have an IDMS serum cratinine measurment some of the coefficients are adjusted to the following:"),
            p('$$\\begin{align} 
-             \\sqrt{\\mathrm{GFR}} &= 2.2400 + 0.0072\\mathrm{Age} + 4.4678\\mathrm{BSA} - 3.945056\\log(\\mathrm{Cre}) - 1.105374\\log(\\mathrm{Cre})^2  \\nonumber \\\\
-             & \\quad + 1.349847\\log(\\mathrm{Cre})^3 - 0.0219\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.4643 +0.0030\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
+             \\sqrt{\\mathrm{GFR}} &= 1.662 + 0.0018\\mathrm{Age} + 4.772\\mathrm{BSA} - 4.049\\log(\\mathrm{Cre}) - 1.162\\log(\\mathrm{Cre})^2  \\nonumber \\\\
+             & \\quad + 1.532\\log(\\mathrm{Cre})^3 - 0.028\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.302 +0.006\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
              \\end{align}$$'),
-           p(HTML("If using non-IDMS tracable creatinine the original CamGFR model<sup>2</sup> is valid and is the default option on this app:")),
+           p(HTML("If using non-IDMS tracable creatinine the original CamGFR model<sup>3</sup> is valid and is the default option on this app:")),
            p('$$\\begin{align}
              \\sqrt{\\mathrm{GFR}} &= 1.8140 + 0.01914\\mathrm{Age} + 4.7328\\mathrm{BSA} - 3.7162\\log(\\mathrm{Cre}) - 0.9142\\log(\\mathrm{Cre})^2  \\nonumber \\\\
              & \\quad + 1.0628\\log(\\mathrm{Cre})^3 - 0.0297\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.0202 +0.0125\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
@@ -227,7 +227,7 @@ navbarPage("Tool to estimate GFR",
                   </div>
                   All coefficients are rounded to 4 decimal places.")),
            
-           h4(HTML("The CKD-EPI equation takes the following form:<sup>3</sup>")), 
+           h4(HTML("The CKD-EPI equation takes the following form:<sup>4</sup>")), 
            sprintf('$$\\mathrm{GFR_{nonadjusted}} =
                    \\begin{cases}
                    141 \\times \\mathrm{min} \\left(\\frac{\\mathrm{Cre}}{0.7}, 1\\right)^{-0.329} \\times \\mathrm{max} \\left(\\frac{\\mathrm{Cre}}{0.7}, 1 \\right)^{-1.209} \\times \\mathrm{Age}^{0.993} \\times 1.018 & \\mathrm{if} \\, \\mathrm{Sex=Female} \\\\
@@ -239,9 +239,10 @@ navbarPage("Tool to estimate GFR",
            
            h5("References:"),
            p("1. New paper"), 
-           p("2. Janowitz T, Williams EH, et al. A new model for estimating glomerular filtration rate in patients with cancer."),
-           p("3. Levey AS, Stevens LA, Schmid CH, Zhang Y, Castro AF, Feldman HI, et al. A New Equation to Estimate Glomerular Filtration Rate. Ann Intern Med. 2009;150:604-612."),
-           p("4. DuBois D, DuBois E. A formula to estimate the approximate surface area if height and weight be known. Arch Intern Med. 1916;17:863–71. ")
+           p("2. Williams EH, Connell CM, Weaver, JMJ, et al. Multicenter Validation of the CamGFR Model for Estimated Glomerular Filtration Rate. JNCI Camcer Spectrum. 2019"),
+           p("3. Janowitz T, Williams EH, et al. A new model for estimating glomerular filtration rate in patients with cancer. Jounal of Clinical Oncology. 2016"),
+           p("4. Levey AS, Stevens LA, Schmid CH, Zhang Y, Castro AF, Feldman HI, et al. A New Equation to Estimate Glomerular Filtration Rate. Ann Intern Med. 2009"),
+           p("5. DuBois D, DuBois E. A formula to estimate the approximate surface area if height and weight be known. Arch Intern Med. 1916")
            
            ) 
   

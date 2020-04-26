@@ -5,7 +5,7 @@ library(dplyr)
 
 
 load("data/sqrt_final_model.rda")
-load("data/CamGFR_refitted.rda")
+CamGFR_v2 <- readRDS("data/CamGFR_reffitted.rds")
 load("data/RandomOrderData.rda")
 source("data/CKD-EPI_model_functions.R")
 
@@ -40,6 +40,7 @@ shinyServer(function(input, output){
       data.frame(Creat = Creat, Age=input$Age, Wt=Wt, 
                  Ht=Ht, Sex=input$Sex, Creatinine_type = input$CreatType) 
       new_data$SufA = DuBois(new_data$Ht, new_data$Wt)
+      new_data$BSA = new_data$SufA
       new_data$log_Creat = log(new_data$Creat)
     new_data
   })
@@ -80,7 +81,7 @@ shinyServer(function(input, output){
     prediction <- if(input$UseOld == T & input$CreatType == "Non_IDMS"){
       predict(object = sqrt_full, newdata = data(), interval = "prediction", level = input$Conf/100)^2
     } else {
-      predict(object = WJ_interaction, newdata = data(), interval = "prediction", level = input$Conf/100)^2
+      predict(object = CamGFR_v2, newdata = data(), interval = "prediction", level = input$Conf/100)^2
     }
 
     div(
@@ -246,12 +247,12 @@ shinyServer(function(input, output){
     # Estimate_CamGFR <- function(data, useOld = F){
     #   if(useOld == T){
     #     ifelse(data$Creatinine_type == "IDMS", 
-    #            predict(object = WJ_interaction, newdata = data,
+    #            predict(object = CamGFR_v2, newdata = data,
     #                    interval = "prediction", level = input$ConfMulti/100)^2, 
     #            predict(object = sqrt_full, newdata = data,
     #                    interval = "prediction", level = input$ConfMulti/100)^2)
     #   } else {
-    #     predict(object = WJ_interaction, newdata = data,
+    #     predict(object = CamGFR_v2, newdata = data,
     #             interval = "prediction", level = input$ConfMulti/100)^2
     #   }
     # }
@@ -259,14 +260,14 @@ shinyServer(function(input, output){
     Estimate_CamGFR <- function(data, useOld = F){
       if(useOld == T){
         if(data$Creatinine_type == "IDMS"){
-          predict(object = WJ_interaction, newdata = data,
+          predict(object = CamGFR_v2, newdata = data,
                   interval = "prediction", level = input$ConfMulti/100)^2
         } else {
           predict(object = sqrt_full, newdata = data,
                   interval = "prediction", level = input$ConfMulti/100)^2
         } 
       } else {
-        predict(object = WJ_interaction, newdata = data,
+        predict(object = CamGFR_v2, newdata = data,
                 interval = "prediction", level = input$ConfMulti/100)^2
       }
     }
@@ -281,7 +282,7 @@ shinyServer(function(input, output){
 
     # CamGFR_res <- Estimate_CamGFR(data_change_names, useOld = input$UseOldMulti)
     #     
-    # CamGFR_res <- predict(object = WJ_interaction, newdata = data_change_names,
+    # CamGFR_res <- predict(object = CamGFR_v2, newdata = data_change_names,
     #                       interval = "prediction", level = input$ConfMulti/100)^2
 
     # CamGFR_res_old <- predict(object = sqrt_full, newdata = data_change_names,
