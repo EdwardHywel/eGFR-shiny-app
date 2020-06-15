@@ -67,6 +67,34 @@ Original_CKD_model_adjusted = function(Sex, Scr, Age, BSA){
 
 
 
+################################################################################
+# LM model 
+# 
+
+LM_revised_equation <- function(Age, Creat, Sex){
+  Creat_mol <- Creat*88.4
+  if(Sex=="F"){
+    if(Creat_mol<150){
+      X = 2.5 + 0.0121*(150-Creat_mol)
+    } else if (Creat_mol >=150){
+      X = 2.5-0.926*log(Creat_mol/150)
+    }
+  } else if (Sex=="M"){
+    if(Creat_mol<150){
+      X = 2.56 + 0.00968*(180-Creat_mol)
+    } else if (Creat_mol >=150){
+      X = 2.56-0.926*log(Creat_mol/180)
+    }
+  }
+  GFR = exp(X-0.0158*Age+0.438*log(Age))
+  return(GFR)
+}
+LM_revised_equation <- Vectorize(LM_revised_equation)
+
+LM_revised_adj_equation <- function(Age, Creat, Sex, BSA){
+  LM_revised_equation(Age, Creat, Sex)*(BSA/1.73)
+}
+LM_revised_adj_equation <- Vectorize(LM_revised_adj_equation)  
 
 
 

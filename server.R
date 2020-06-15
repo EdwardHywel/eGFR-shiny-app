@@ -69,7 +69,7 @@ shinyServer(function(input, output){
     data = data()
     paste0("The body surface area for both models was calculated as ", 
                     round(data$SufA, 2), 
-                  "m<sup>2</sup> using the DuBois formula<sup>4</sup> and the input data provided.")
+                  "m<sup>2</sup> using the DuBois-DuBois formula<sup>5</sup> and the input data provided.")
     # HTML(paste0("The body surface area for both models was calculated as ", 
     #             round(data$SufA, 2), 
     #             " m\u00B2 using the DuBois formula<sup>4</sup>\u00B3 and the input data provided."))
@@ -78,18 +78,31 @@ shinyServer(function(input, output){
 
   
   output$CamGFR_estimate <- renderUI({
+    
+    data = data()
+    
     prediction <- if(input$UseOld == T & input$CreatType == "Non_IDMS"){
-      predict(object = sqrt_full, newdata = data(), interval = "prediction", level = input$Conf/100)^2
+      predict(object = sqrt_full, newdata = data, interval = "prediction", level = input$Conf/100)^2
     } else {
-      predict(object = CamGFR_v2, newdata = data(), interval = "prediction", level = input$Conf/100)^2
+      predict(object = CamGFR_v2, newdata = data, interval = "prediction", level = input$Conf/100)^2
     }
 
+    prediction <- as.vector(prediction)
+    prediction <- if(input$units == "ml/min"){
+      prediction
+    } else {
+      prediction*1.73/data$SufA
+    }
+      
+    
+
     div(
-      div(class="alert alert-success", style="font-size: 20px; width: 300px; text-align: left; margin-bottom: 0",
+      div(class="alert alert-success", style="display: inline-block; font-size: 20px;  text-align: left; margin-bottom: 0",
           tags$strong(paste(round(prediction[1],2))),
-          paste0("(", round(prediction[2],2), "-", round(prediction[3],2), ") mL/min")),
-      paste0("where the brackets denote the ", input$Conf,
-             "% confidence interval for this predicted value")
+          paste0("(", round(prediction[2],2), "-", round(prediction[3],2), ")")),
+      div(style="display: inline-block; font-size: 20px", input$units),
+      div(paste0("where the brackets denote the ", input$Conf,
+             "% confidence interval for this predicted value"))
     )
   })
   
@@ -99,15 +112,38 @@ shinyServer(function(input, output){
   
   output$CKD_estimate <- renderPrint({
     data = data()
-    prediction <- Original_CKD_model_adjusted(data$Sex, data$Creat, data$Age, BSA = data$SufA)
-
+    if(input$units == "ml/min"){
+      prediction <-  Original_CKD_model_adjusted(data$Sex, data$Creat, data$Age, BSA = data$SufA)
+    } else {
+      prediction <-  Original_CKD_model(data$Sex, data$Creat, data$Age)
+    }
+    
     div(
-      div(class="alert alert-success", style="font-size: 20px; width: 175px; text-align: left; margin-bottom: 0", 
-          tags$strong(paste(round(prediction,2))), 
-          "mL/min")
+      div(class="alert alert-success", style="display: inline-block; font-size: 20px; text-align: left; margin-bottom: 0", 
+          tags$strong(paste(round(prediction,2)))), 
+      div(style="display: inline-block; font-size: 20px", input$units)
     )
 
   })
+  
+  output$LM_estimate <- renderPrint({
+    data = data()
+    if(input$units == "ml/min"){
+      prediction <- LM_revised_adj_equation(Sex = data$Sex, Creat = data$Creat, 
+                                            Age = data$Age, BSA = data$SufA)
+    } else {
+      prediction <- LM_revised_equation(Sex = data$Sex, Creat = data$Creat, 
+                                        Age = data$Age)
+    }
+    
+    div(
+      div(class="alert alert-success", style="display: inline-block; font-size: 20px; text-align: left; margin-bottom: 0", 
+          tags$strong(paste(round(prediction,2)))), 
+      div(style="display: inline-block; font-size: 20px", input$units)
+    )
+    
+  })
+  
   
   
   output$p_below <- renderUI({

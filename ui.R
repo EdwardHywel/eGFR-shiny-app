@@ -76,10 +76,14 @@ navbarPage("Tool to estimate GFR",
                                                    label2 = "pounds", value1 = "12", value2 = "10")),
                  br(),
                  radioButtons("Sex","Gender:",choices = c("Male"="M","Female"= "F"), inline=T),
+                 br(),
+                 h4("Model option"),
+                 radioButtons("units", "Output units:", 
+                              choices = c("ml/min"="ml/min", "ml/min/1.73m\u00B2"="ml/min/1.73m\u00B2"), inline = T),
                  textInputRow_one("Prediction interval confidence interval:", "Conf", "%", "95", min = 0, max = 100),
                  br(),
                  checkboxInput("Hyptest", "Do you wish to estimate the probability that the true GFR is below or above a threshold value", 
-                               value = TRUE), 
+                               value = FALSE), 
                  conditionalPanel(condition = 'input.Hyptest',
                                   textInputRow_one("GFR threshold value", "TestValue", "ml/min", "50"),
                                   radioButtons("LesGre", "Probaility that try value is above or below?", 
@@ -96,6 +100,7 @@ navbarPage("Tool to estimate GFR",
               tabsetPanel(
                 tabPanel(("Results"),
                          h3("The estimates provided are for guidance only", style="color:red"),
+                         h4("This is an updated app for CamGFR v2", style="color:red"),
                          uiOutput("SufA_sentance"),
                          h4(HTML("GFR estimated using CamGFR:<sup>1,2</sup>")),
                          uiOutput("CamGFR_estimate"),
@@ -105,7 +110,9 @@ navbarPage("Tool to estimate GFR",
                          # br(),
                          uiOutput("p_below"),
                          h4(HTML("GFR esimated using the BSA adjusted CKD-EPI model:<sup>3</sup>")),
-                         uiOutput("CKD_estimate")
+                         uiOutput("CKD_estimate"),
+                         h4(HTML("GFR esimated using the BSA adjusted Lund-Malmo model:<sup>4</sup>")),
+                         uiOutput("LM_estimate")
                          
                 ),
                 tabPanel(("Histograms"), 
@@ -236,12 +243,26 @@ navbarPage("Tool to estimate GFR",
            tags$div('where GFR now has the units ml/min/1.73m\u00B2 and all other variables have the same units as above. This non adjusted estimated GFR value is then BSA-adjusted by the following equation'), 
            sprintf('$$\\mathrm{GFR_{adjusted}} =  \\mathrm{GFR_{non adjusted}} \\times \\frac{1.73}{\\mathrm{BSA}}$$'),
            
+           h4(HTML("The Lund-Malmo equation takes the following form:<sup>5</sup>")), 
+           sprintf('$$\\mathrm{GFR_{nonadjusted}} = \\exp\\left(X - 0.0158\\text{Age} + 0.438\\log(\\text{Age})\\right)$$'),
+           tags$div('where'), 
+           sprintf('$$
+                   \\begin{align}
+                    X &= 2.56  + 0.0121(150 - \\text{Cre})&&  \\, \\text{if Sex=Female and Cre} < 150 \\\\
+                    X &= 2.56 -0.926\\log\\left(\\frac{\\text{Cre}}{150}\\right) && \\, \\text{if Sex=Female and Cre} \\geq 150 \\\\
+                    X &= 2.5 + 0.00968(180 - \\text{Cre}) && \\, \\text{if Sex=Male and Cre} < 180 \\\\
+                    X &= 2.5 -0.926\\log\\left(\\frac{\\text{Cre}}{180}\\right) && \\, \\text{if Sex=Male and Cre} \\geq 180
+                   \\end{align}
+                   $$'),
+           p(HTML("and Cre is blood serum creatinine concentration with units umol/L")),
+           
            h5("References:"),
-           p("1. New paper"), 
+           p("1. Williams EH, Whitley C, Weaver, JMJ, et al. The CamGFR model for renal function in patients with cancer: Validation and extension for use with data from isotope mass dilution spectrometry creatinine assays. JNCI Cancer Conference Abstracts. 2018"), 
            p("2. Williams EH, Connell CM, Weaver, JMJ, et al. Multicenter Validation of the CamGFR Model for Estimated Glomerular Filtration Rate. JNCI Camcer Spectrum. 2019"),
            p("3. Janowitz T, Williams EH, et al. A new model for estimating glomerular filtration rate in patients with cancer. Jounal of Clinical Oncology. 2016"),
            p("4. Levey AS, Stevens LA, Schmid CH, Zhang Y, Castro AF, Feldman HI, et al. A New Equation to Estimate Glomerular Filtration Rate. Ann Intern Med. 2009"),
-           p("5. DuBois D, DuBois E. A formula to estimate the approximate surface area if height and weight be known. Arch Intern Med. 1916")
+           p("5. Björk, J., Grubb, A., Sterner, G., and Nyman, U. Revised equations for estimating glomerular filtration rate based on the Lund-Malmö Study cohort. Scandinavian Journal of Clinical and Laboratory Investigation. 2011"),
+           p("6. DuBois D, DuBois E. A formula to estimate the approximate surface area if height and weight be known. Arch Intern Med. 1916")
            
            ) 
   
