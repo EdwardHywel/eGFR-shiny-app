@@ -31,9 +31,9 @@ shinyServer(function(input, output){
       Wt = 0.453592*wt_pounds
     }
     if(input$CreatUnit == "umol"){
-      Creat <- input$Creat/88.4
+      Creat <- input$Creat_umol/88.4
     } else if(input$CreatUnit == "mg"){
-      Creat <- input$Creat
+      Creat <- input$Creat_mg
     }
     
     new_data <- 

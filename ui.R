@@ -47,12 +47,12 @@ navbarPage("Tool to estimate GFR",
   sidebarLayout(
     sidebarPanel(width = 5,  h4("Patient data"),
                  radioButtons("CreatUnit", "Creatinine units:", choices = c("mg/dL"="mg", "umol/L"="umol"), inline=T),
-                 conditionalPanel(condition = 'input.CreatUnit == "mg"', 
-                                  textInputRow_one("Blood serum creatinine:", "Creat", "mg/dl", value="1")),
                  conditionalPanel(condition = 'input.CreatUnit == "umol"', 
-                                  textInputRow_one("Blood serum creatinine:", "Creat", "umol/L", value="88")),
+                                  textInputRow_one("Blood serum creatinine:", "Creat_umol", "umol/L", value=88, min = 0)),
+                 conditionalPanel(condition = 'input.CreatUnit == "mg"', 
+                                  textInputRow_one("Blood serum creatinine:", "Creat_mg", "mg/dl", value=1, min = 0)),
                  # numericInput("Creat", "Blood serum creatinine:",value="1", min=0),
-                 radioButtons("CreatType", tags$div("Is the creatinine IDMS tracable?", 
+                 radioButtons("CreatType", tags$div("Is the creatinine IDMS traceable?", 
                                                     tags$sup("*")), 
                               choices = c("Yes"="IDMS", "No"="Non_IDMS"), inline=T),
                  textInputRow_one("Age:", "Age", "years", value="50", min = 18),
@@ -91,7 +91,7 @@ navbarPage("Tool to estimate GFR",
                                   ),
                  radioButtons("UseOld", tags$div("Use CamGFR v1 for non-IDMS creatinine data:", 
                                                  tags$sup("**")),
-                              choices = c("Yes"=T,"No"= F), inline = T)
+                              choices = c("Yes"=T, "No"= F), inline = T, selected = F)
     ),
 
     
