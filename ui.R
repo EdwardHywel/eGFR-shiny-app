@@ -50,7 +50,7 @@ navbarPage("Tool to estimate GFR",
                  conditionalPanel(condition = 'input.CreatUnit == "umol"', 
                                   textInputRow_one("Blood serum creatinine:", "Creat_umol", "umol/L", value=88, min = 0)),
                  conditionalPanel(condition = 'input.CreatUnit == "mg"', 
-                                  textInputRow_one("Blood serum creatinine:", "Creat_mg", "mg/dl", value=1, min = 0)),
+                                  textInputRow_one("Blood serum creatinine:", "Creat_mg", "mg/dL", value=1, min = 0)),
                  # numericInput("Creat", "Blood serum creatinine:",value="1", min=0),
                  radioButtons("CreatType", tags$div("Is the creatinine IDMS traceable?", 
                                                     tags$sup("*")), 
@@ -77,10 +77,10 @@ navbarPage("Tool to estimate GFR",
                  br(),
                  radioButtons("Sex","Gender:",choices = c("Male"="M","Female"= "F"), inline=T),
                  br(),
-                 h4("Model option"),
+                 h4("Model options"),
                  radioButtons("units", "Output units:", 
                               choices = c("ml/min"="ml/min", "ml/min/1.73m\u00B2"="ml/min/1.73m\u00B2"), inline = T),
-                 textInputRow_one("Prediction interval confidence interval:", "Conf", "%", "95", min = 0, max = 100),
+                 textInputRow_one("Prediction interval level:", "Conf", "%", "95", min = 0, max = 100),
                  br(),
                  checkboxInput("Hyptest", "Do you wish to estimate the probability that the true GFR is below or above a threshold value", 
                                value = FALSE), 
@@ -109,15 +109,15 @@ navbarPage("Tool to estimate GFR",
                          # uiOutput('ex3'),
                          # br(),
                          uiOutput("p_below"),
-                         h4(HTML("GFR esimated using the BSA adjusted CKD-EPI model:<sup>3</sup>")),
+                         h4(HTML("GFR estimated using the BSA adjusted CKD-EPI model:<sup>3</sup>")),
                          uiOutput("CKD_estimate"),
-                         h4(HTML("GFR esimated using the BSA adjusted Lund-Malmo model:<sup>4</sup>")),
+                         h4(HTML("GFR estimated using the BSA adjusted Lund-Malmo model:<sup>4</sup>")),
                          uiOutput("LM_estimate")
                          
                 ),
                 tabPanel(("Histograms"), 
                          br(),
-                         p("This tab shows the histogram of the data used to develop the model with the input values shown as a red vertical line. The maximum and minimum of the variables are shown as grey vertical lines. The data input data values should not be outside the range of the data used to develop the model"),
+                         p("This tab shows the histogram of the data used to develop the model with the input values shown as a red vertical line. The maximum and minimum of the variables are shown as grey vertical lines. The data input values should not be outside the range of the data used to develop the model."),
                          h4("Blood serum creatinine"), 
                          plotOutput("hist1"), 
                          h4("Age"), 
@@ -160,14 +160,14 @@ navbarPage("Tool to estimate GFR",
     
     mainPanel(width = 7, 
       tabsetPanel(
-        tabPanel("Instruction",
+        tabPanel("Instructions",
                  br(),
                  p(HTML("In this section a comma seperated file (.csv) can be uploaded
                         and GFR will be estimated using both the CamGFR model and the CKD model (if 
                         the file has a different separator please specify). 
                         An excel (.xls or .xlsx) will not work so please convert it to a .csv file 
-                        before trying to usie this app.")),
-                 p(HTML("The input file should have the following column names with the unit in the blackets.")),
+                        before trying to use this app.")),
+                 p(HTML("The input file should have the following column names with the unit in the brackets.")),
                  p(HTML("Creatinine (mg/dL)<br/> 
                           Gender (M or F)<br/>  Height (cm)<br/>  Weight (Kg)<br/>  CreatinineType (IDMS or Non_IDMS)")),
                  tags$strong("Example input data:"),
@@ -203,21 +203,21 @@ navbarPage("Tool to estimate GFR",
   
   tabPanel(("Equations and references"), 
            h4(HTML("CamGFR model:<sup>1</sup>")),
-           p(HTML("The CamGFR v1 model<sup>2</sup> was develop using a non-IDMS tracable 
-                  creatinien data set and hence should oly be used for non-IDMS tracable creatinine patients. 
-                  The CamGFR v2 model<sup>1</sup> is a refitted version of the original model and is suitable for both IDMS-tracable and and non-IDMS-tracable creatinine. 
-                  The two equations for non-IDMS-tracable creatinine produce very similar results and either can be used.  </br>
-                  The CamGFR v2 model for patients with IDMS tracable cratinine has the following form and coefficients:")),
+           p(HTML("The CamGFR v1 model<sup>2</sup> was developed using a non-IDMS traceable 
+                  creatinine data set and hence should only be used for non-IDMS traceable creatinine patients. 
+                  The CamGFR v2 model<sup>1</sup> is a refitted version of the original model and is suitable for both IDMS-traceable and and non-IDMS-traceable creatinine. 
+                  The two equations for non-IDMS-traceable creatinine produce very similar results and either can be used.  </br>
+                  The CamGFR v2 model for patients with IDMS traceable creatinine has the following form and coefficients:")),
            p('$$\\begin{align} 
              \\sqrt{\\mathrm{GFR}} &= 1.154 + 0.0018\\mathrm{Age} + 4.772\\mathrm{BSA} - 3.499\\log(\\mathrm{Cre_{IDMS}}) - 0.738\\log(\\mathrm{Cre_{IDMS}})^2  \\nonumber \\\\
              & \\quad + 0.699\\log(\\mathrm{Cre_{IDMS}})^3 - 0.028\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.302 +0.006\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
              \\end{align}$$'),
-           p("For patients who do not have an IDMS serum cratinine measurment some of the coefficients are adjusted to the following:"),
+           p("For patients who do not have an IDMS serum creatinine measurement some of the coefficients are adjusted to the following:"),
            p('$$\\begin{align} 
              \\sqrt{\\mathrm{GFR}} &= 1.662 + 0.0018\\mathrm{Age} + 4.772\\mathrm{BSA} - 4.049\\log(\\mathrm{Cre}) - 1.162\\log(\\mathrm{Cre})^2  \\nonumber \\\\
              & \\quad + 1.532\\log(\\mathrm{Cre})^3 - 0.028\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.302 +0.006\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
              \\end{align}$$'),
-           p(HTML("If using non-IDMS tracable creatinine the CamGFR v1 model<sup>3</sup> is valid and is the default option on this app:")),
+           p(HTML("If using non-IDMS traceable creatinine the CamGFR v1 model<sup>3</sup> is valid:")),
            p('$$\\begin{align}
              \\sqrt{\\mathrm{GFR}} &= 1.8140 + 0.01914\\mathrm{Age} + 4.7328\\mathrm{BSA} - 3.7162\\log(\\mathrm{Cre}) - 0.9142\\log(\\mathrm{Cre})^2  \\nonumber \\\\
              & \\quad + 1.0628\\log(\\mathrm{Cre})^3 - 0.0297\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.0202 +0.0125\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
@@ -225,10 +225,10 @@ navbarPage("Tool to estimate GFR",
            p(HTML("For the above equations:
                   <div>
                     <ul>
-                      <li>GFR is Glomerular filtration rate with units ml/min</li>
+                      <li>GFR is glomerular filtration rate with units ml/min</li>
                       <li>Age has the units years</li>
                       <li>BSA is body surface area with units m\u00B2 calculated using the DuBois equation</li>
-                      <li>Cre is blood serum creatinine concentration with units mg/dL and the subscript IDMS indicates that the mearument is IDMS tracable</li>
+                      <li>Cre is blood serum creatinine concentration with units mg/dL and the subscript IDMS indicates that the measurement is IDMS traceable.</li>
                     </ul>
                   </div>
                   All coefficients are rounded to 4 decimal places.")),
@@ -254,7 +254,7 @@ navbarPage("Tool to estimate GFR",
                     X &= 2.5 -0.926\\log\\left(\\frac{\\text{Cre}}{180}\\right) && \\, \\text{if Sex=Male and Cre} \\geq 180
                    \\end{align}
                    $$'),
-           p(HTML("and Cre is blood serum creatinine concentration with units umol/L")),
+           p(HTML("and Cre is blood serum creatinine concentration with units umol/L.")),
            
            h5("References:"),
            p("1. Williams EH, Whitley C, Weaver, JMJ, et al. The CamGFR model for renal function in patients with cancer: Validation and extension for use with data from isotope mass dilution spectrometry creatinine assays. JNCI Cancer Conference Abstracts. 2018"), 
