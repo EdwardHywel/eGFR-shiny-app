@@ -209,18 +209,18 @@ navbarPage("Tool to estimate GFR",
                   The two equations for non-IDMS-traceable creatinine produce very similar results and either can be used.  </br>
                   The CamGFR v2 model for patients with IDMS traceable creatinine has the following form and coefficients:")),
            p('$$\\begin{align} 
-             \\sqrt{\\mathrm{GFR}} &= 1.154 + 0.0018\\mathrm{Age} + 4.772\\mathrm{BSA} - 3.499\\log(\\mathrm{Cre_{IDMS}}) - 0.738\\log(\\mathrm{Cre_{IDMS}})^2  \\nonumber \\\\
-             & \\quad + 0.699\\log(\\mathrm{Cre_{IDMS}})^3 - 0.028\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.302 +0.006\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
+             \\sqrt{\\mathrm{GFR}} &= 1.154 + 0.018\\mathrm{Age} + 4.772\\mathrm{BSA} - 3.499\\ln(\\mathrm{Cre_{IDMS}}) - 0.738\\ln(\\mathrm{Cre_{IDMS}})^2  \\nonumber \\\\
+             & \\quad + 0.699\\ln(\\mathrm{Cre_{IDMS}})^3 - 0.028\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.302 +0.006\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
              \\end{align}$$'),
            p("For patients who do not have an IDMS serum creatinine measurement some of the coefficients are adjusted to the following:"),
            p('$$\\begin{align} 
-             \\sqrt{\\mathrm{GFR}} &= 1.662 + 0.0018\\mathrm{Age} + 4.772\\mathrm{BSA} - 4.049\\log(\\mathrm{Cre}) - 1.162\\log(\\mathrm{Cre})^2  \\nonumber \\\\
-             & \\quad + 1.532\\log(\\mathrm{Cre})^3 - 0.028\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.302 +0.006\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
+             \\sqrt{\\mathrm{GFR}} &= 1.662 + 0.018\\mathrm{Age} + 4.772\\mathrm{BSA} - 4.049\\ln(\\mathrm{Cre}) - 1.162\\ln(\\mathrm{Cre})^2  \\nonumber \\\\
+             & \\quad + 1.532\\ln(\\mathrm{Cre})^3 - 0.028\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.302 +0.006\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
              \\end{align}$$'),
            p(HTML("If using non-IDMS traceable creatinine the CamGFR v1 model<sup>3</sup> is valid:")),
            p('$$\\begin{align}
-             \\sqrt{\\mathrm{GFR}} &= 1.8140 + 0.01914\\mathrm{Age} + 4.7328\\mathrm{BSA} - 3.7162\\log(\\mathrm{Cre}) - 0.9142\\log(\\mathrm{Cre})^2  \\nonumber \\\\
-             & \\quad + 1.0628\\log(\\mathrm{Cre})^3 - 0.0297\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.0202 +0.0125\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
+             \\sqrt{\\mathrm{GFR}} &= 1.8140 + 0.01914\\mathrm{Age} + 4.7328\\mathrm{BSA} - 3.7162\\ln(\\mathrm{Cre}) - 0.9142\\ln(\\mathrm{Cre})^2  \\nonumber \\\\
+             & \\quad + 1.0628\\ln(\\mathrm{Cre})^3 - 0.0297\\mathrm{Age}\\times\\mathrm{BSA} + \\left(0.0202 +0.0125\\mathrm{Age}\\right)[\\mathrm{if} \\, \\mathrm{Sex=Male}] \\nonumber
              \\end{align}$$'),
            p(HTML("For the above equations:
                   <div>
@@ -229,6 +229,7 @@ navbarPage("Tool to estimate GFR",
                       <li>Age has the units years</li>
                       <li>BSA is body surface area with units m\u00B2 calculated using the DuBois equation</li>
                       <li>Cre is blood serum creatinine concentration with units mg/dL and the subscript IDMS indicates that the measurement is IDMS traceable.</li>
+                      <li>ln is the natural logarithm</li>
                     </ul>
                   </div>
                   All coefficients are rounded to 4 decimal places.")),
@@ -244,14 +245,14 @@ navbarPage("Tool to estimate GFR",
            sprintf('$$\\mathrm{GFR_{adjusted}} =  \\mathrm{GFR_{non adjusted}} \\times \\frac{1.73}{\\mathrm{BSA}}$$'),
            
            h4(HTML("The Lund-Malmo equation takes the following form:<sup>5</sup>")), 
-           sprintf('$$\\mathrm{GFR_{nonadjusted}} = \\exp\\left(X - 0.0158\\text{Age} + 0.438\\log(\\text{Age})\\right)$$'),
+           sprintf('$$\\mathrm{GFR_{nonadjusted}} = \\exp\\left(X - 0.0158\\text{Age} + 0.438\\ln(\\text{Age})\\right)$$'),
            tags$div('where'), 
            sprintf('$$
                    \\begin{align}
                     X &= 2.56  + 0.0121(150 - \\text{Cre})&&  \\, \\text{if Sex=Female and Cre} < 150 \\\\
-                    X &= 2.56 -0.926\\log\\left(\\frac{\\text{Cre}}{150}\\right) && \\, \\text{if Sex=Female and Cre} \\geq 150 \\\\
+                    X &= 2.56 -0.926\\ln\\left(\\frac{\\text{Cre}}{150}\\right) && \\, \\text{if Sex=Female and Cre} \\geq 150 \\\\
                     X &= 2.5 + 0.00968(180 - \\text{Cre}) && \\, \\text{if Sex=Male and Cre} < 180 \\\\
-                    X &= 2.5 -0.926\\log\\left(\\frac{\\text{Cre}}{180}\\right) && \\, \\text{if Sex=Male and Cre} \\geq 180
+                    X &= 2.5 -0.926\\ln\\left(\\frac{\\text{Cre}}{180}\\right) && \\, \\text{if Sex=Male and Cre} \\geq 180
                    \\end{align}
                    $$'),
            p(HTML("and Cre is blood serum creatinine concentration with units umol/L.")),
