@@ -277,6 +277,7 @@ shinyServer(function(input, output){
                                     Sex = data$Gender, Creat = data$Creatinine, 
                                     Creatinine_type = data$CreatinineType, 
                                     SufA = DuBois(data$Height, data$Weight),
+                                    BSA = DuBois(data$Height, data$Weight),
                                     Age = data$Age,
                                     log_Creat = log(data$Creatinine))
     
